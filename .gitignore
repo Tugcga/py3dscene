@@ -1,0 +1,9 @@
+develope_use.py
+__pycache__
+.vs
+*.sln
+*.user
+*.vcxproj
+*.filters
+bin_src/FormatIO/temp_build
+py3dscene/bin
