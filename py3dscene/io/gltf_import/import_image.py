@@ -26,7 +26,7 @@ def import_images(gltf_model: GLTFModel,
             image_pixel_type: int = gltf_image.pixel_type
             image_bits: int = gltf_image.bits
 
-            image_name: str = gltf_image.name
+            image_name: str = gltf_image.name.split("\\")[-1]
             if len(image_name) == 0:
                 image_name = "texture_" + str(i)
             image_folder = file_path[:last_slash] + "/" + file_path[last_slash + 1: last_point] + "_textures/"
@@ -42,7 +42,7 @@ def import_images(gltf_model: GLTFModel,
         else:
             # we assume that the path is relative to the input file
             # form new relative path
-            image_path = file_path[:last_slash] + "//" + image_uri
+            image_path = file_path[:last_slash] + "/" + image_uri
 
         if len(image_path) > 0:
             images_map[i] = image_path

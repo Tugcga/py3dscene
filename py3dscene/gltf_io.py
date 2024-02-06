@@ -22,7 +22,6 @@ def from_gltf(file_path: str) -> Scene:
 
     # at first import images
     images_map: dict[int, str] = import_images(gltf_model, gltf_scene, file_path)
-    print("images map", images_map)
 
     # next materials
     materials_map: dict[int, PBRMaterial] = {}
@@ -36,6 +35,12 @@ def from_gltf(file_path: str) -> Scene:
     
     # next read scene nodes
     nodes_map: dict[int, Object] = {}
+    # each envelope data is a tuple:
+    #   - skin index
+    #   - object with this skin
+    #   - dictionary with
+    #       key - scene node index
+    #       value - weights for the mesh
     envelopes: list[tuple[int, Object, dict[int, list[float]]]] = []
     for i in range(len(gltf_scene.nodes)):
         process_node(gltf_model, gltf_model.nodes[gltf_scene.nodes[i]], gltf_scene.nodes[i], scene, None, materials_map, nodes_map, envelopes)

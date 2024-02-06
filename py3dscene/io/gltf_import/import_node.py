@@ -21,14 +21,13 @@ def process_node(gltf_model: GLTFModel,
                  materials_map: dict[int, PBRMaterial],
                  nodes_map: dict[int, Object],
                  envelopes: list[tuple[int, Object, dict[int, list[float]]]]):
-    print("import node", gltf_node_index)
     local_tfm = import_transform(gltf_node)
     object_name = gltf_node.name
     # create new object
     if parent is None:
-        object = scene.create_object(object_name)
+        object = scene.create_object(object_name, gltf_node_index)
     else:
-        object = parent.create_subobject(object_name)
+        object = parent.create_subobject(object_name, gltf_node_index)
     
     # assign local transform
     object.assign_local_tfm(local_tfm)

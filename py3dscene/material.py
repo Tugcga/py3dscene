@@ -104,3 +104,6 @@ class PBRMaterial:
     
     def get_occlusion_texture(self) -> Optional[tuple[str, int, float]]:
         return self._occlusion_texture
+    
+    def __str__(self) -> str:
+        return f"{self._name}"
