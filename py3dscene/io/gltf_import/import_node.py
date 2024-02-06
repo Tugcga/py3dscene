@@ -6,7 +6,7 @@ from py3dscene.bin.tiny_gltf import Camera as GLTFCamera  # type: ignore
 from py3dscene.bin.tiny_gltf import Light as GLTFLight  # type: ignore
 from py3dscene.scene import Scene
 from py3dscene.object import Object
-from py3dscene.material import Material
+from py3dscene.material import PBRMaterial
 
 from py3dscene.io.gltf_import.import_transform import import_transform
 from py3dscene.io.gltf_import.import_mesh import import_object_mesh
@@ -18,7 +18,7 @@ def process_node(gltf_model: GLTFModel,
                  gltf_node_index: int,
                  scene: Scene,
                  parent: Optional[Object],
-                 materials_map: dict[int, Material],
+                 materials_map: dict[int, PBRMaterial],
                  nodes_map: dict[int, Object],
                  envelopes: list[tuple[int, Object, dict[int, list[float]]]]):
     print("import node", gltf_node_index)

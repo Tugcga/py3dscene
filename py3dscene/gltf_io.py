@@ -1,5 +1,5 @@
 from py3dscene.scene import Scene
-from py3dscene.material import Material
+from py3dscene.material import PBRMaterial
 from py3dscene.object import Object
 from py3dscene.bin.tiny_gltf import load_gltf  # type: ignore
 from py3dscene.bin.tiny_gltf import Scene as GLTFScene  # type: ignore
@@ -25,13 +25,14 @@ def from_gltf(file_path: str) -> Scene:
     print("images map", images_map)
 
     # next materials
-    materials_map: dict[int, Material] = {}
+    materials_map: dict[int, PBRMaterial] = {}
     for material_index in range(len(gltf_model.materials)):
         gltf_material: GLTFMaterial = gltf_model.materials[material_index]
         material = import_material(gltf_model, gltf_material, material_index, images_map)
         materials_map[material_index] = material
         # add material to the scene
-        scene.add_material(material)
+        # use index as the id
+        scene.add_material(material, material_index)
     
     # next read scene nodes
     nodes_map: dict[int, Object] = {}

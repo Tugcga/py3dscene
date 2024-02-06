@@ -17,6 +17,7 @@ def import_images(gltf_model: GLTFModel,
         # in other case the path already exists
         image_path = ""
         last_slash = file_path.rfind("/")
+        last_point = file_path.rfind(".")
         if len(image_uri) == 0:
             # extract the image
             image_width: int = gltf_image.width
@@ -28,7 +29,7 @@ def import_images(gltf_model: GLTFModel,
             image_name: str = gltf_image.name
             if len(image_name) == 0:
                 image_name = "texture_" + str(i)
-            image_folder = file_path[:last_slash] + "/textures/"
+            image_folder = file_path[:last_slash] + "/" + file_path[last_slash + 1: last_point] + "_textures/"
             # create directory if it does not exists
             os.makedirs(image_folder, exist_ok=True)
             image_path = image_folder + image_name + ".png"
