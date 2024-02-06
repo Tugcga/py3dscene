@@ -9,3 +9,4 @@ bin_src/FormatIO/temp_build
 py3dscene/bin
 samples
 .vscode
+.mypy_cache

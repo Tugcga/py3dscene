@@ -37,6 +37,15 @@ bool save_gltf(const tinygltf::Model model, const std::string filename, bool emb
     return loader.WriteGltfSceneToFile(&model, filename, embed_images, embed_buffers, pretty_print, write_binary);
 }
 
+bool write_png(const std::string file_path, int width, int height, int components, const std::vector<int> pixels) {
+    unsigned char* u_pixels = new unsigned char[pixels.size()];
+    for (size_t i = 0; i < pixels.size(); i++) {
+        u_pixels[i] = pixels[i];
+    }
+    int out = stbi_write_png(file_path.c_str(), width, height, components, u_pixels, width * components);
+    return out > 0;
+}
+
 PYBIND11_MODULE(tiny_gltf, py_module) {
     py_module.doc() = "Bindings for tinygltf library";
 
@@ -410,4 +419,5 @@ PYBIND11_MODULE(tiny_gltf, py_module) {
 
     py_module.def("load_gltf", &load_gltf);
     py_module.def("save_gltf", &save_gltf);
+    py_module.def("write_png", &write_png);
 }

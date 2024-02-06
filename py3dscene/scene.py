@@ -1,5 +1,5 @@
-from py3dscene.material import Material  # type: ignore
-from py3dscene.object import Object  # type: ignore
+from py3dscene.material import Material
+from py3dscene.object import Object
 
 class Scene:
     def __init__(self):
