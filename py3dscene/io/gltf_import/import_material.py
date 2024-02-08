@@ -11,7 +11,8 @@ def import_material(gltf_model: GLTFModel,
     if len(material_name) == 0:
         material_name = "Material_" + str(material_index)
     
-    material = PBRMaterial(material_name)
+    # ise material index as id
+    material = PBRMaterial(material_name, material_index)
 
     alpha_mode: str = gltf_material.alpha_mode
     if alpha_mode == "MASK":

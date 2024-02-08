@@ -24,14 +24,14 @@ def from_gltf(file_path: str) -> Scene:
     images_map: dict[int, str] = import_images(gltf_model, gltf_scene, file_path)
 
     # next materials
+    # key is material id = index in gltf
     materials_map: dict[int, PBRMaterial] = {}
     for material_index in range(len(gltf_model.materials)):
         gltf_material: GLTFMaterial = gltf_model.materials[material_index]
         material = import_material(gltf_model, gltf_material, material_index, images_map)
-        materials_map[material_index] = material
+        materials_map[material.get_id()] = material
         # add material to the scene
-        # use index as the id
-        scene.add_material(material, material_index)
+        scene.add_material(material)
     
     # next read scene nodes
     nodes_map: dict[int, Object] = {}
