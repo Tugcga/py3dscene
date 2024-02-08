@@ -30,7 +30,7 @@ def process_node(gltf_model: GLTFModel,
         object = parent.create_subobject(object_name, gltf_node_index)
     
     # assign local transform
-    object.assign_local_tfm(local_tfm)
+    object.set_local_tfm(local_tfm)
 
     if gltf_node.mesh >= 0 and gltf_node.mesh < len(gltf_model.meshes):
         # current node contains a mesh component

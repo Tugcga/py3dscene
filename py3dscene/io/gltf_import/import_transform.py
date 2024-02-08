@@ -1,10 +1,6 @@
 from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
 from py3dscene.transform import Transform
-from py3dscene.transform import get_identity
-from py3dscene.transform import get_translation_matrix
-from py3dscene.transform import get_rotation_matrix
-from py3dscene.transform import get_scale_matrix
-from py3dscene.transform import multiply
+from py3dscene.transform import get_srt_matrix
 
 '''GLTF use matrix for transforms where the last column is (0.0, 0.0, 0.0, 1.0)
 It means that to apply the transform we should multiply the row with coordinates (x, y, z) ito matrix
@@ -24,10 +20,9 @@ def import_transform(gltf_node: GLTFNode) -> Transform:
         gltf_translation: list[float] = gltf_node.translation
         gltf_rotation: list[float] = gltf_node.rotation
         gltf_scale: list[float] = gltf_node.scale
-        translation: Transform = get_translation_matrix(*gltf_translation) if len(gltf_translation) > 0 else get_identity()
-        rotation: Transform = get_rotation_matrix(*gltf_rotation) if len(gltf_rotation) > 0 else get_identity()
-        scale: Transform = get_scale_matrix(*gltf_scale) if len(gltf_scale) > 0 else get_identity()
-        return multiply(translation, multiply(rotation, scale))
+        return get_srt_matrix((gltf_translation[0], gltf_translation[1], gltf_translation[2]) if len(gltf_translation) > 0 else (0.0, 0.0, 0.0),
+                              (gltf_rotation[0], gltf_rotation[1], gltf_rotation[2], gltf_rotation[3]) if len(gltf_rotation) > 0 else (0.0, 0.0, 0.0, 1.0),
+                              (gltf_scale[0], gltf_scale[1], gltf_scale[2]) if len(gltf_scale) > 0 else (1.0, 1.0, 1.0))
     else:
         return ((gltf_mat[0], gltf_mat[4], gltf_mat[8], gltf_mat[12]),
                 (gltf_mat[1], gltf_mat[5], gltf_mat[9], gltf_mat[13]),
