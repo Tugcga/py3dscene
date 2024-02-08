@@ -43,11 +43,11 @@ def process_node(gltf_model: GLTFModel,
     elif gltf_node.camera >= 0 and gltf_node.camera < len(gltf_model.cameras):
         # current node is a camera
         gltf_camera: GLTFCamera = gltf_model.cameras[gltf_node.camera]
-        import_object_camera(gltf_model, gltf_camera, object)
+        import_object_camera(gltf_camera, object)
     elif gltf_node.light >= 0 and gltf_node.light < len(gltf_model.lights):
         # current node is a light
         gltf_light: GLTFLight = gltf_model.lights[gltf_node.light]
-        import_object_light(gltf_model, gltf_light, object)
+        import_object_light(gltf_light, object)
     
     nodes_map[gltf_node_index] = object
 

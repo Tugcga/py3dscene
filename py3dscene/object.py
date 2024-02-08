@@ -6,6 +6,9 @@ from py3dscene.transform import tfm_to_translation
 from py3dscene.transform import tfm_to_rotation
 from py3dscene.transform import tfm_to_scale
 from py3dscene.transform import get_srt_matrix
+from py3dscene.camera import CameraComponent
+from py3dscene.light import LightComponent
+from py3dscene.mesh import MeshComponent
 
 class Object:
     id_pointer: int = 0
@@ -26,6 +29,12 @@ class Object:
         # quaternion stored in format (x, y, z, w) = w + i * x + j * y + k * z
         self._rotation: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0)
         self._scale: tuple[float, float, float] = (1.0, 1.0, 1.0)
+
+        # each object can store several components
+        self._camera: Optional[CameraComponent] = None
+        self._light: Optional[LightComponent] = None
+        # object can contains several mesh components
+        self._meshes: list[MeshComponent] = []
     
     def create_subobject(self, name: str="", id: Optional[int]=None) -> Object:
         new_object: Object = Object(name, id)
@@ -50,6 +59,12 @@ class Object:
     def set_local_scale(self, x: float, y: float, z: float):
         self._scale = (x, y, z)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
+    
+    def set_camera_component(self, camera: CameraComponent):
+        self._camera = camera
+    
+    def set_light_component(self, light: LightComponent):
+        self._light = light
 
     def get_id(self) -> int:
         return self._id
@@ -68,6 +83,12 @@ class Object:
     
     def get_scale(self) -> tuple[float, float, float]:
         return self._scale
+    
+    def get_camera(self) -> Optional[CameraComponent]:
+        return self._camera
+    
+    def get_light(self) -> Optional[LightComponent]:
+        return self._light
 
     def __str__(self) -> str:
         children_list: list[str] = []
