@@ -11,6 +11,8 @@ Quaternion4d = tuple[float, float, float, float]
 ValuesVariants = Vector3d | Quaternion4d | tuple[Vector3d, Vector3d, Vector3d] | tuple[Quaternion4d, Quaternion4d, Quaternion4d]
 
 class Animation:
+    '''Store animation clip
+    '''
     def __init__(self, type: AnimationCurveType) -> None:
         self._type: AnimationCurveType = type
         self._points_count: int = 0
@@ -18,6 +20,8 @@ class Animation:
         self._values: list[ValuesVariants] = []
     
     def add_keyframe(self, frame: float, value: ValuesVariants):
+        '''Add keyframe to the clip at specific frame and with specific value
+        '''
         i: int = 0
         while i < len(self._frames) and self._frames[i] < frame:
             i += 1
@@ -30,12 +34,20 @@ class Animation:
         self._points_count += 1
     
     def get_type(self) -> AnimationCurveType:
+        '''Return type of the animation clip (linear, step or cubic)
+        '''
         return self._type
     
     def get_frames(self) -> list[float]:
+        '''Return the list of all key frames
+        '''
         return self._frames
     
     def get_value_at_frame(self, frame: float) -> Optional[ValuesVariants]:
+        '''Return value at specific key frame
+        If there are no key frame in the clip, then return None
+        This method does not interpolate values between different key frames
+        '''
         for i, f in enumerate(self._frames):
             if abs(f - frame) < 0.0001:
                 return self._values[i]

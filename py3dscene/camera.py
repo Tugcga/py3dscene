@@ -6,6 +6,8 @@ class CameraType(Enum):
     ORTHOGRAPHIC = 2
 
 class CameraComponent:
+    '''Store the camera in the 3d-scene
+    '''
     def __init__(self):
         self._type = CameraType.PERSPECTIVE
         self._near = 0.0
@@ -18,39 +20,63 @@ class CameraComponent:
         self._ortho_height = 1.0
 
     def set_type(self, value: CameraType):
+        '''Define the camera type (perspective or orthographic)
+        '''
         self._type = value
     
     def set_clipping_planes(self, near: float, far: float):
+        '''Define clipping planes of the camera
+        '''
         self._near = near
         self._far = far
     
     def set_perspective_aspect(self, value: float):
+        '''Define aspect ratio of the perspective camera
+        '''
         self._aspect = value
     
     def set_perspective_fov(self, value: float):
+        '''Define vertical field of view of the perspective camera
+        '''
         self._fov = value
     
     def set_orthographic_size(self, width: float, height: float):
+        '''Define size of the orthographic camera
+        '''
         self._ortho_width = width
         self._ortho_height = height
     
     def get_type(self) -> CameraType:
+        '''Return type of the camera
+        '''
         return self._type
     
     def get_clipping_near(self) -> float:
+        '''Return values of the near clipping plane of the camera
+        '''
         return self._near
     
     def get_clipping_far(self) -> float:
+        '''Return value of the far clipping plane of the camera
+        '''
         return self._far
     
     def get_perspective_aspect(self) -> float:
+        '''Return aspect raton of the perspective camera
+        '''
         return self._aspect
 
     def get_perspective_fov(self) -> float:
+        '''Return vertical field of view of the perspective camera
+        '''
         return self._fov
     
     def get_orthographic_width(self) -> float:
+        '''Return width of the orthographic camera
+        '''
         return self._ortho_width
     
     def get_orthographic_height(self) -> float:
+        '''Return height of the orthographic camera
+        '''
         return self._ortho_height

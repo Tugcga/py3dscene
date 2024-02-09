@@ -3,22 +3,34 @@ from py3dscene.material import PBRMaterial
 from py3dscene.object import Object
 
 class Scene:
+    '''Main class for store 3d-scene data
+    '''
     def __init__(self) -> None:
         self._materials: list[PBRMaterial] = []
         self._objects: list[Object] = []
 
     def add_material(self, material: PBRMaterial):
+        '''Add material to the scene
+        '''
         self._materials.append(material)
     
     def get_material(self, id: int) -> PBRMaterial:
+        '''Return material with a given id
+        '''
         return self._materials[id]
     
     def create_object(self, name: str="", id: Optional[int]=None) -> Object:
+        '''Create and return new object. This object parented to the root of the scene
+        It's possible to define the custom id for the new object
+        '''
         new_object = Object(name, id)
         self._objects.append(new_object)
         return new_object
     
     def get_object_by_id(self, id: int) -> Optional[Object]:
+        '''Return object with a given id
+        If there are no such object return None
+        '''
         for obj in self._objects:
             v: Optional[Object] = obj.get_object_by_id(id)
             if v:

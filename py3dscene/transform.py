@@ -18,24 +18,36 @@ def length(x: float, y: float, z: float):
     return math.sqrt(x**2 + y**2 + z**2)
 
 def get_identity() -> Transform:
+    '''Return matrix of the identity transform
+    1.0 0.0 0.0 0.0
+    0.0 1.0 0.0 0.0
+    0.0 0.0 1.0 0.0
+    0.0 0.0 0.0 1.0
+    '''
     return ((1.0, 0.0, 0.0, 0.0),
             (0.0, 1.0, 0.0, 0.0),
             (0.0, 0.0, 1.0, 0.0),
             (0.0, 0.0, 0.0, 1.0))
 
 def get_translation_matrix(x: float, y: float, z: float) -> Transform:
+    '''Return matrix for the translation (x, y, z)
+    '''
     return ((1.0, 0.0, 0.0, x),
             (0.0, 1.0, 0.0, y),
             (0.0, 0.0, 1.0, z),
             (0.0, 0.0, 0.0, 1.0))
 
 def get_rotation_matrix(x: float, y: float, z: float, w: float) -> Transform:
+    '''Return matrix for the rotation q = w + x * i 9 y * j + z * k
+    '''
     return ((-1.0 + 2.0 * (w**2 + x**2), 2.0 * (x * y - w * z), 2.0 * (x * z + w * y), 0.0), 
             (2.0 * (x * y + w * z), -1.0 + 2.0 * (w**2 + y**2), 2.0 * (y * z - w * x), 0.0), 
             (2.0 * (x * z - w * y), 2.0 * (y * z + w * x), -1.0 + 2.0 * (w**2 + z**2), 0.0), 
             (0.0, 0.0, 0.0, 1.0))
 
 def get_scale_matrix(x: float, y: float, z: float) -> Transform:
+    '''Return matrix for the scale transformation
+    '''
     return ((x, 0.0, 0.0, 0.0),
             (0.0, y, 0.0, 0.0),
             (0.0, 0.0, z, 0.0),
@@ -44,6 +56,9 @@ def get_scale_matrix(x: float, y: float, z: float) -> Transform:
 def get_srt_matrix(translation: tuple[float, float, float],
                    rotation: tuple[float, float, float, float],
                    scale: tuple[float, float, float]) -> Transform:
+    '''Return matrix for the transformation with given translation, rotation and scale
+    Calculate it in the order T * R * S (from right to left)
+    '''
     translation_tfm: Transform = get_translation_matrix(*translation)
     rotation_tfm: Transform = get_rotation_matrix(*rotation)
     scale_tfm: Transform = get_scale_matrix(*scale)
@@ -66,9 +81,13 @@ def multiply(a: Transform, b: Transform) -> Transform:
             (result[3][0], result[3][1], result[3][2], result[3][3]))
 
 def tfm_to_translation(tfm: Transform) -> tuple[float, float, float]:
+    '''Extract translation from transform matrix
+    '''
     return (tfm[0][3], tfm[1][3], tfm[2][3])
 
 def tfm_to_rotation(tfm: Transform) -> tuple[float, float, float, float]:
+    '''Extract rotation quaternion from transform matrix
+    '''
     trace = tfm[0][0] + tfm[1][1] + tfm[2][2]
     if trace > 0.0:
         k = 0.5 / math.sqrt(1.0 + trace)
@@ -84,6 +103,8 @@ def tfm_to_rotation(tfm: Transform) -> tuple[float, float, float, float]:
         return (k * (tfm[0][2] + tfm[2][0]), k * (tfm[1][2] + tfm[2][1]), 0.25 / k, k * (tfm[1][0] - tfm[0][1]))
 
 def tfm_to_scale(tfm: Transform) -> tuple[float, float, float]:
+    '''Extract scale from transform matrix
+    '''
     return (length(tfm[0][0], tfm[1][0], tfm[2][0]),
             length(tfm[0][1], tfm[1][1], tfm[2][1]),
             length(tfm[0][2], tfm[1][2], tfm[2][2]))

@@ -14,6 +14,9 @@ from py3dscene.io.gltf_import.import_animation import import_animations
 
 def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     '''Create and return Scene object, which contains default scene from input gltf/glb file
+    Parameter fps is used for animations
+    glTF format store animation keyframes in seconds, but more traditional way is to store it in frames
+    parameter fps used to convert seconds-related values to frame-related values
     '''
     gltf_model: GLTFModel = load_gltf(file_path)
     gltf_scene: GLTFScene = gltf_model.scenes[gltf_model.default_scene if gltf_model.default_scene > -1 else 0]

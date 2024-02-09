@@ -12,6 +12,8 @@ from py3dscene.mesh import MeshComponent
 from py3dscene.animation import Animation
 
 class Object:
+    '''Class for store object inside a 3d-scene
+    '''
     id_pointer: int = 0
 
     def __init__(self, name: str="", id: Optional[int]=None) -> None:
@@ -43,11 +45,18 @@ class Object:
         self._scale_animation: Optional[Animation] = None
     
     def create_subobject(self, name: str="", id: Optional[int]=None) -> Object:
+        '''Create and return a new object. Parent it to the current object
+        It's possible to define custom id for the new object
+        If id is not defines, then use the global counter
+        It's does not recommended to mix custom and automatic ids: use either only custom id's for all object all automatic ones
+        '''
         new_object: Object = Object(name, id)
         self._children.append(new_object)
         return new_object
     
     def set_local_tfm(self, tfm: Transform):
+        '''Define matrix of the local transformation of the object
+        '''
         self._transform = tfm
         # also extract translation, rotation and scale from this matrix
         self._translation = tfm_to_translation(tfm)
@@ -55,81 +64,137 @@ class Object:
         self._scale = tfm_to_scale(tfm)
     
     def set_local_translation(self, x: float, y: float, z: float):
+        '''Define position of the object
+        '''
         self._translation = (x, y, z)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
 
     def set_local_rotation(self, x: float, y: float, z: float, w: float):
+        '''Define rotation of the object
+        '''
         self._rotation = (x, y, z, w)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
 
     def set_local_scale(self, x: float, y: float, z: float):
+        '''Define scale of the object
+        '''
         self._scale = (x, y, z)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
     
     def set_camera_component(self, camera: CameraComponent):
+        '''Add camera component to the object
+        '''
         self._camera = camera
     
     def set_light_component(self, light: LightComponent):
+        '''Add light component to the object
+        '''
         self._light = light
     
     def set_translation_animation(self, animation: Animation):
+        '''Define translation animation of the object
+        '''
         self._translation_animation = animation
     
     def set_rotation_animation(self, animation: Animation):
+        '''Define rotation animation of the object
+        '''
         self._rotation_animation = animation
     
     def set_scale_animation(self, animation: Animation):
+        '''Define scale animation of the object
+        '''
         self._scale_animation = animation
     
     def add_mesh_component(self, mesh: MeshComponent):
+        '''Add mesh component to the object
+        Each object can contains several mesh components
+        '''
         self._meshes.append(mesh)
 
     def get_id(self) -> int:
+        '''Return id of the object
+        '''
         return self._id
     
     def get_name(self) -> str:
+        '''Return name of the object
+        '''
         return self._name
     
     def get_transform(self) -> Transform:
+        '''Return transformation matrix of the object
+        '''
         return self._transform
 
     def get_translation(self) -> tuple[float, float, float]:
+        '''Return translation of the object
+        '''
         return self._translation
     
     def get_rotation(self) -> tuple[float, float, float, float]:
+        '''Return rotation of the object
+        '''
         return self._rotation
     
     def get_scale(self) -> tuple[float, float, float]:
+        '''Return scale of the object
+        '''
         return self._scale
     
     def get_camera(self) -> Optional[CameraComponent]:
+        '''Return camera component of the object
+        If it does not assigned, then return None
+        '''
         return self._camera
     
     def get_light(self) -> Optional[LightComponent]:
+        '''Return light component of the object
+        If it does not assigned, then return None
+        '''
         return self._light
     
     def get_mesh_components(self) -> list[MeshComponent]:
+        '''Return the full list of all mesh components of the object
+        '''
         return self._meshes
 
     def get_mesh_components_count(self) -> int:
+        '''Return the number of mesh components (i.e. clusters or submeshes) of the object
+        '''
         return len(self._meshes)
     
     def get_mesh_component(self, index: int) -> Optional[MeshComponent]:
+        '''Return mesh component of the object with specific index
+        If the index is invalid, then return None
+        '''
         if index < len(self._meshes):
             return self._meshes[index]
         else:
             return None
     
     def get_translation_animation(self) -> Optional[Animation]:
+        '''Return translation animation of the object
+        If it does node defined, then return None
+        '''
         return self._translation_animation
     
     def get_rotation_animation(self) -> Optional[Animation]:
+        '''Return rotation animation of the object
+        If it does node defined, then return None
+        '''
         return self._rotation_animation
     
     def get_scale_animation(self) -> Optional[Animation]:
+        '''Return scale animation of the object
+        If it does node defined, then return None
+        '''
         return self._scale_animation
     
     def get_object_by_id(self, id: int) -> Optional[Object]:
+        '''Find and return the object with a given id
+        Search in the collection of this object and children sub-objects
+        '''
         if self._id == id:
             return self
         for sub_obj in self._children:
