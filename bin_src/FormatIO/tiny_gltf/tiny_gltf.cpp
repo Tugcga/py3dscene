@@ -334,7 +334,7 @@ PYBIND11_MODULE(tiny_gltf, py_module) {
         .def_readwrite("accessors", &tinygltf::Model::accessors)
         .def_readwrite("animations", &tinygltf::Model::animations)
         .def_readwrite("buffers", &tinygltf::Model::buffers)
-        .def_readwrite("bufferViews", &tinygltf::Model::bufferViews)
+        .def_readwrite("buffer_views", &tinygltf::Model::bufferViews)
         .def_readwrite("materials", &tinygltf::Model::materials)
         .def_readwrite("meshes", &tinygltf::Model::meshes)
         .def_readwrite("nodes", &tinygltf::Model::nodes)

@@ -65,6 +65,9 @@ class Object:
     
     def set_light_component(self, light: LightComponent):
         self._light = light
+    
+    def add_mesh_component(self, mesh: MeshComponent):
+        self._meshes.append(mesh)
 
     def get_id(self) -> int:
         return self._id
@@ -89,6 +92,27 @@ class Object:
     
     def get_light(self) -> Optional[LightComponent]:
         return self._light
+    
+    def get_mesh_components(self) -> list[MeshComponent]:
+        return self._meshes
+
+    def get_mesh_components_count(self) -> int:
+        return len(self._meshes)
+    
+    def get_mesh_component(self, index: int) -> Optional[MeshComponent]:
+        if index < len(self._meshes):
+            return self._meshes[index]
+        else:
+            return None
+    
+    def get_object_by_id(self, id: int) -> Optional[Object]:
+        if self._id == id:
+            return self
+        for sub_obj in self._children:
+            v: Optional[Object] = sub_obj.get_object_by_id(id)
+            if v:
+                return v
+        return None
 
     def __str__(self) -> str:
         children_list: list[str] = []

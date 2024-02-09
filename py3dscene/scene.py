@@ -3,9 +3,6 @@ from py3dscene.material import PBRMaterial
 from py3dscene.object import Object
 
 class Scene:
-    # default material used by mesh components without material
-    default_material: PBRMaterial = PBRMaterial("default_material", -1)
-
     def __init__(self) -> None:
         self._materials: list[PBRMaterial] = []
         self._objects: list[Object] = []
@@ -20,6 +17,13 @@ class Scene:
         new_object = Object(name, id)
         self._objects.append(new_object)
         return new_object
+    
+    def get_object_by_id(self, id: int) -> Optional[Object]:
+        for obj in self._objects:
+            v: Optional[Object] = obj.get_object_by_id(id)
+            if v:
+                return v
+        return None
     
     def __str__(self) -> str:
         objects_list: list[str] = []

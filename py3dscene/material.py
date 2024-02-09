@@ -177,3 +177,9 @@ class PBRMaterial(Material):
     
     def __str__(self) -> str:
         return f"{self._name}"
+
+# default material used by mesh components without material
+default_material: PBRMaterial = PBRMaterial("default_material", -1)
+
+def get_default_material() -> PBRMaterial:
+    return default_material
