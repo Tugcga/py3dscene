@@ -9,6 +9,7 @@ from py3dscene.transform import get_srt_matrix
 from py3dscene.camera import CameraComponent
 from py3dscene.light import LightComponent
 from py3dscene.mesh import MeshComponent
+from py3dscene.animation import Animation
 
 class Object:
     id_pointer: int = 0
@@ -35,6 +36,11 @@ class Object:
         self._light: Optional[LightComponent] = None
         # object can contains several mesh components
         self._meshes: list[MeshComponent] = []
+
+        # animations
+        self._translation_animation: Optional[Animation] = None
+        self._rotation_animation: Optional[Animation] = None
+        self._scale_animation: Optional[Animation] = None
     
     def create_subobject(self, name: str="", id: Optional[int]=None) -> Object:
         new_object: Object = Object(name, id)
@@ -65,6 +71,15 @@ class Object:
     
     def set_light_component(self, light: LightComponent):
         self._light = light
+    
+    def set_translation_animation(self, animation: Animation):
+        self._translation_animation = animation
+    
+    def set_rotation_animation(self, animation: Animation):
+        self._rotation_animation = animation
+    
+    def set_scale_animation(self, animation: Animation):
+        self._scale_animation = animation
     
     def add_mesh_component(self, mesh: MeshComponent):
         self._meshes.append(mesh)
@@ -104,6 +119,15 @@ class Object:
             return self._meshes[index]
         else:
             return None
+    
+    def get_translation_animation(self) -> Optional[Animation]:
+        return self._translation_animation
+    
+    def get_rotation_animation(self) -> Optional[Animation]:
+        return self._rotation_animation
+    
+    def get_scale_animation(self) -> Optional[Animation]:
+        return self._scale_animation
     
     def get_object_by_id(self, id: int) -> Optional[Object]:
         if self._id == id:

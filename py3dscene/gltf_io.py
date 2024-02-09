@@ -12,7 +12,7 @@ from py3dscene.io.gltf_import.import_node import process_node
 from py3dscene.io.gltf_import.import_skin import import_object_skin
 from py3dscene.io.gltf_import.import_animation import import_animations
 
-def from_gltf(file_path: str) -> Scene:
+def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     '''Create and return Scene object, which contains default scene from input gltf/glb file
     '''
     gltf_model: GLTFModel = load_gltf(file_path)
@@ -46,11 +46,12 @@ def from_gltf(file_path: str) -> Scene:
         process_node(gltf_model, gltf_model.nodes[gltf_scene.nodes[i]], gltf_scene.nodes[i], scene, None, materials_map, nodes_map, envelopes)
     
     # after nodes import skin data
+    # TODO: implement store object skinning
     for i in range(len(envelopes)):
         envelop_data: tuple[int, Object, dict[int, list[float]]] = envelopes[i]
         import_object_skin(gltf_model, envelop_data[1], envelop_data[0], envelop_data[2], nodes_map)
     
     # finally animations
-    import_animations(gltf_model, nodes_map)
+    import_animations(gltf_model, nodes_map, fps)
 
     return scene
