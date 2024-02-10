@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 import sys
 
 class CameraType(Enum):
@@ -8,7 +9,7 @@ class CameraType(Enum):
 class CameraComponent:
     '''Store the camera in the 3d-scene
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         self._type = CameraType.PERSPECTIVE
         self._near = 0.0
         self._far = sys.float_info.max
@@ -18,7 +19,7 @@ class CameraComponent:
         # for orthographic
         self._ortho_width = 1.0
         self._ortho_height = 1.0
-
+    
     def set_type(self, value: CameraType):
         '''Define the camera type (perspective or orthographic)
         '''
@@ -45,7 +46,7 @@ class CameraComponent:
         '''
         self._ortho_width = width
         self._ortho_height = height
-    
+        
     def get_type(self) -> CameraType:
         '''Return type of the camera
         '''

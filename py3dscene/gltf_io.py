@@ -108,6 +108,9 @@ def to_gltf(scene: Scene,
         if scene_node_index >= 0:
             gltf_scene_nodes.append(scene_node_index)
     gltf_scene.nodes = gltf_scene_nodes
+    gltf_model.nodes = gltf_model_nodes
+    gltf_model.cameras = gltf_model_cameras
+    gltf_model.lights = gltf_model_lights
 
     for i in range(len(envelope_meshes)):
         export_skin(gltf_model, i, envelope_meshes[i], object_to_node)

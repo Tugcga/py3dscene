@@ -26,3 +26,4 @@ def import_object_light(gltf_light: GLTFLight,
     elif gltf_type == "spot":
         light.set_type(LightType.SPOT)
         light.set_spot_angles(gltf_light.spot.inner_cone_angle, gltf_light.spot.outer_cone_angle)
+    object.set_light_component(light)

@@ -21,17 +21,17 @@ def export_iterate(gltf_model_nodes: list[GLTFNode],
     object_id: int = object.get_id()
     if object_id in exported_objects:
         return -1
-    
+
     if object.is_camera():
         camera = object.get_camera()
         if camera:
-            gltf_node = export_camera(camera, gltf_model_cameras)
+            gltf_node = export_camera(camera, object, gltf_model_cameras)
     elif object.is_light():
         light = object.get_light()
         if light:
-            gltf_node = export_light(light, gltf_model_lights)
+            gltf_node = export_light(light, object, gltf_model_lights)
     else:
-        gltf_node = export_node()
+        gltf_node = export_node(object, materials_map, textures_map, envelope_meshes)
 
     if gltf_node:
         exported_objects.add(object_id)
@@ -45,7 +45,4 @@ def export_iterate(gltf_model_nodes: list[GLTFNode],
                 gltf_node_children.append(child_index)
         
             gltf_node.children = gltf_node_children
-
-        if node_index >= 0:
-            gltf_model_nodes.append(gltf_node)
     return node_index
