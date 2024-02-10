@@ -41,6 +41,16 @@ class Scene:
                 return v
         return None
     
+    def get_objects_count(self) -> int:
+        '''Return the number of objects in the root level of the scene
+        '''
+        return len(self._objects)
+    
+    def get_root_objects(self) -> list[Object]:
+        '''Return the list with objects in the root level of the scene
+        '''
+        return self._objects
+    
     def __str__(self) -> str:
         objects_list: list[str] = []
         for obj in self._objects:

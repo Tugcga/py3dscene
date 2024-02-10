@@ -141,6 +141,11 @@ class Object:
         '''Return scale of the object
         '''
         return self._scale
+
+    def is_camera(self) -> bool:
+        '''Return True if the object contains camera component, False otherwise
+        '''
+        return self._camera is not None
     
     def get_camera(self) -> Optional[CameraComponent]:
         '''Return camera component of the object
@@ -148,11 +153,21 @@ class Object:
         '''
         return self._camera
     
+    def is_light(self) -> bool:
+        '''Return True if the object contains light component, False otherwise
+        '''
+        return self._light is not None
+    
     def get_light(self) -> Optional[LightComponent]:
         '''Return light component of the object
         If it does not assigned, then return None
         '''
         return self._light
+    
+    def is_mesh(self) -> bool:
+        '''Return True if the object contains at least one mesh component, False otherwise
+        '''
+        return len(self._meshes) > 0
     
     def get_mesh_components(self) -> list[MeshComponent]:
         '''Return the full list of all mesh components of the object
@@ -202,6 +217,12 @@ class Object:
             if v:
                 return v
         return None
+    
+    def get_subobjects_count(self) -> int:
+        return len(self._children)
+    
+    def get_children(self) -> list[Object]:
+        return self._children
 
     def __str__(self) -> str:
         children_list: list[str] = []
