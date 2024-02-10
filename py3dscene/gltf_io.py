@@ -31,10 +31,8 @@ def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     materials_map: dict[int, PBRMaterial] = {}
     for material_index in range(len(gltf_model.materials)):
         gltf_material: GLTFMaterial = gltf_model.materials[material_index]
-        material = import_material(gltf_model, gltf_material, material_index, images_map)
+        material = import_material(gltf_material, scene, material_index, images_map)
         materials_map[material.get_id()] = material
-        # add material to the scene
-        scene.add_material(material)
     
     # next read scene nodes
     nodes_map: dict[int, Object] = {}

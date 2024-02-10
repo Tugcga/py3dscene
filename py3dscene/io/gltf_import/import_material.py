@@ -1,10 +1,10 @@
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
 from py3dscene.bin.tiny_gltf import Material as GLTFMaterial  # type: ignore
+from py3dscene.scene import Scene
 from py3dscene.material import PBRMaterial
 from py3dscene.material import AlphaMode
 
-def import_material(gltf_model: GLTFModel,
-                    gltf_material: GLTFMaterial,
+def import_material(gltf_material: GLTFMaterial,
+                    scene: Scene,
                     material_index: int,
                     images_map: dict[int, str]) -> PBRMaterial:
     material_name = gltf_material.name
@@ -12,7 +12,7 @@ def import_material(gltf_model: GLTFModel,
         material_name = "Material_" + str(material_index)
     
     # ise material index as id
-    material = PBRMaterial(material_name, material_index)
+    material = scene.create_material(material_name, material_index)
 
     alpha_mode: str = gltf_material.alpha_mode
     if alpha_mode == "MASK":

@@ -9,10 +9,14 @@ class Scene:
         self._materials: list[PBRMaterial] = []
         self._objects: list[Object] = []
 
-    def add_material(self, material: PBRMaterial):
-        '''Add material to the scene
+    def create_material(self, name: str="", id: Optional[int]=None) -> PBRMaterial:
+        '''Create and return material
+        It's recommended to create materials by this method
+        It automatically add material to the list in the scene object
         '''
+        material: PBRMaterial = PBRMaterial(name, id)
         self._materials.append(material)
+        return material
     
     def get_material(self, id: int) -> PBRMaterial:
         '''Return material with a given id
