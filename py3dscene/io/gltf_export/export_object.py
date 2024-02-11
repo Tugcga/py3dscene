@@ -2,18 +2,24 @@ from typing import Optional
 from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
 from py3dscene.bin.tiny_gltf import Camera as GLTFCamera  # type: ignore
 from py3dscene.bin.tiny_gltf import Light as GLTFLight  # type: ignore
+from py3dscene.bin.tiny_gltf import Mesh as GLTFMesh  # type: ignore
+from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
+from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
 from py3dscene.io.gltf_export.export_camera import export_camera
 from py3dscene.io.gltf_export.export_light import export_light
 from py3dscene.io.gltf_export.export_node import export_node
 from py3dscene.object import Object
 
-def export_iterate(gltf_model_nodes: list[GLTFNode],
+def export_iterate(gltf_model_buffers_data: list[int],
+                   gltf_model_buffer_views: list[GLTFBufferView],
+                   gltf_model_accessors: list[GLTFAccessor],
+                   gltf_model_nodes: list[GLTFNode],
                    gltf_model_cameras: list[GLTFCamera],
                    gltf_model_lights: list[GLTFLight],
+                   gltf_model_meshes: list[GLTFMesh],
                    object: Object,
                    exported_objects: set[int],
 	               materials_map: dict[int, int],
-	               textures_map: dict[int, int],
 	               envelope_meshes: list[Object],
 	               object_to_node: dict[int, int]) -> int:
     node_index: int = -1
@@ -31,7 +37,13 @@ def export_iterate(gltf_model_nodes: list[GLTFNode],
         if light:
             gltf_node = export_light(light, object, gltf_model_lights)
     else:
-        gltf_node = export_node(object, materials_map, textures_map, envelope_meshes)
+        gltf_node = export_node(object,
+                                gltf_model_buffers_data,
+                                gltf_model_buffer_views,
+                                gltf_model_accessors,
+                                gltf_model_meshes,
+                                materials_map,
+                                envelope_meshes)
 
     if gltf_node:
         exported_objects.add(object_id)
@@ -40,7 +52,18 @@ def export_iterate(gltf_model_nodes: list[GLTFNode],
 
         gltf_node_children: list[int] = []
         for child in object.get_children():
-            child_index = export_iterate(gltf_model_nodes, gltf_model_cameras, gltf_model_lights, child, exported_objects, materials_map, textures_map, envelope_meshes, object_to_node)
+            child_index = export_iterate(gltf_model_buffers_data,
+                                         gltf_model_buffer_views,
+                                         gltf_model_accessors,
+                                         gltf_model_nodes,
+                                         gltf_model_cameras,
+                                         gltf_model_lights,
+                                         gltf_model_meshes,
+                                         child,
+                                         exported_objects,
+                                         materials_map,
+                                         envelope_meshes,
+                                         object_to_node)
             if child_index >= 0:
                 gltf_node_children.append(child_index)
         
