@@ -28,6 +28,7 @@ from py3dscene.io.gltf_import.import_animation import import_animations
 from py3dscene.io.gltf_export.export_object import export_iterate
 from py3dscene.io.gltf_export.export_skin import export_skin
 from py3dscene.io.gltf_export.export_animation import export_animation
+from py3dscene.io.gltf_export.export_material import export_materials
 
 def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     '''Create and return Scene object, which contains default scene from input gltf/glb file
@@ -100,7 +101,6 @@ def to_gltf(scene: Scene,
     gltf_scene = GLTFScene()
     
     materials_map: dict[int, int] = {}  # key - material object id, value - index in the gltf materials list
-    textures_map: dict[int, int] = {}  # key - image clip id, value - index of the texture in the gltf textures list
     envelope_meshes: list[Object] = []
     object_to_node: dict[int, int] = {}  # map from scene object id to gltf node index
 
@@ -120,10 +120,15 @@ def to_gltf(scene: Scene,
     gltf_model_samplers: list[GLTFSampler] = []
 
     # at the beginning we should export materials and used textures
+    export_materials(folder_path,
+                     scene.get_all_materials(),
+                     gltf_model_materials,
+                     gltf_model_textures,
+                     gltf_model_images,
+                     materials_map)
     gltf_model.materials = gltf_model_materials
     gltf_model.textures = gltf_model_textures
-    gltf_model.images = gltf_model_images   
-
+    gltf_model.images = gltf_model_images
 
     for obj in scene.get_root_objects():
         scene_node_index: int = export_iterate(gltf_model_buffers_data,

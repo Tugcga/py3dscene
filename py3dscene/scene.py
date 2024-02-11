@@ -17,6 +17,11 @@ class Scene:
         material: PBRMaterial = PBRMaterial(name, id)
         self._materials.append(material)
         return material
+
+    def get_all_materials(self) -> list[PBRMaterial]:
+        '''Return the full list of all materials in the scene
+        '''
+        return self._materials
     
     def get_material(self, id: int) -> PBRMaterial:
         '''Return material with a given id

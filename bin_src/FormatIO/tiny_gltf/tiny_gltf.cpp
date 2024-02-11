@@ -34,6 +34,15 @@ tinygltf::Model load_gltf(const std::string filename) {
 bool save_gltf(const tinygltf::Model model, const std::string filename, bool embed_images, bool embed_buffers, bool pretty_print, bool write_binary) {
     tinygltf::TinyGLTF loader;
 
+    tinygltf::WriteImageDataFunction WriteImageData = &tinygltf::WriteImageData;
+    tinygltf::FsCallbacks fs =
+    {
+        &tinygltf::FileExists, &tinygltf::ExpandFilePath,
+        &tinygltf::ReadWholeFile, &tinygltf::WriteWholeFile,
+        nullptr
+    };
+    loader.SetImageWriter(WriteImageData, &fs);
+
     return loader.WriteGltfSceneToFile(&model, filename, embed_images, embed_buffers, pretty_print, write_binary);
 }
 
@@ -44,6 +53,22 @@ bool write_png(const std::string file_path, int width, int height, int component
     }
     int out = stbi_write_png(file_path.c_str(), width, height, components, u_pixels, width * components);
     return out > 0;
+}
+
+std::vector<int> get_image_info(const std::string file_name) {
+    int width, height, channels;
+    bool is_ok = stbi_info(file_name.c_str(), &width, &height, &channels);
+
+    return { width, height, channels, is_ok ? 1 : 0 };
+}
+
+std::vector<unsigned char> load_image(const std::string file_path) {
+    int width, height, components;
+    unsigned char* data = stbi_load(file_path.c_str(), &width, &height, &components, 0);
+    std::vector<unsigned char> to_return((size_t)width * height * components);
+    to_return.assign(data, data + width * height * components);
+    
+    return to_return;
 }
 
 PYBIND11_MODULE(tiny_gltf, py_module) {
@@ -420,4 +445,6 @@ PYBIND11_MODULE(tiny_gltf, py_module) {
     py_module.def("load_gltf", &load_gltf);
     py_module.def("save_gltf", &save_gltf);
     py_module.def("write_png", &write_png);
+    py_module.def("get_image_info", &get_image_info);
+    py_module.def("load_image", &load_image);
 }

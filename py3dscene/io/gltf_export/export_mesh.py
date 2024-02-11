@@ -42,6 +42,7 @@ def distance4(a: tuple[float, float, float, float],
 
 def get_index_from_vertex_array(array: list[VertexType], value: VertexType) -> int:
     for i, v in enumerate(array):
+        is_next = False
         # return -1 if value is different with array element (in some place)
         # check positions
         if distance3(v[0], value[0]) > EPSILON:
@@ -51,31 +52,46 @@ def get_index_from_vertex_array(array: list[VertexType], value: VertexType) -> i
             continue
         for j in range(len(v[1])):
             if distance3(v[1][j], value[1][j]) > EPSILON:
+                is_next = True
                 continue
+        if is_next:
+            continue
         # check uvs
         if len(v[2]) != len(value[2]):
             continue
         for j in range(len(v[2])):
             if distance2(v[2][j], value[2][j]) > EPSILON:
+                is_next = True
                 continue
+        if is_next:
+            continue
         # colors
         if len(v[3]) != len(value[3]):
             continue
         for j in range(len(v[3])):
             if distance4(v[3][j], value[3][j]) > EPSILON:
+                is_next = False
                 continue
+        if is_next:
+            continue
         # tangents
         if len(v[4]) != len(value[4]):
             continue
         for j in range(len(v[4])):
             if distance4(v[4][j], value[4][j]) > EPSILON:
+                is_next = False
                 continue
+        if is_next:
+            continue
         # shapes
         if len(v[5]) != len(value[5]):
             continue
         for j in range(len(v[5])):
             if distance3(v[5][j], value[5][j]) > EPSILON:
+                is_next = False
                 continue
+        if is_next:
+            continue
         # if we pass all checks then value coincide with v
         # return the index
         return i

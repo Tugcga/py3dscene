@@ -162,7 +162,7 @@ def import_object_mesh(gltf_model: GLTFModel,
                         continue
 
                     v = triangles[i]
-                    uvs_attr.append((uvs[2 * v], 1.0 - uvs[2 * v + 1]))
+                    uvs_attr.append((uvs[2 * v], uvs[2 * v + 1]))
                 mesh.add_uvs(uvs_attr)
             elif attribute_name.find("COLOR") == 0:
                 colors: list[float] = get_float_buffer(gltf_model, accessor)
