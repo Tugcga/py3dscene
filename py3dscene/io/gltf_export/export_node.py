@@ -13,7 +13,8 @@ def export_node(object: Object,
                 gltf_model_accessors: list[GLTFAccessor],
                 gltf_model_meshes: list[GLTFMesh],
                 materials_map: dict[int, int],
-	            envelope_meshes: list[Object]) -> Optional[GLTFNode]:
+	            envelope_meshes: list[Object],
+                optimize_mesh_nodes: bool) -> Optional[GLTFNode]:
     new_node: GLTFNode = GLTFNode()
     new_node.name = object.get_name()
 
@@ -32,6 +33,7 @@ def export_node(object: Object,
                     new_node,
                     object,
                     materials_map,
-                    envelope_meshes)
+                    envelope_meshes,
+                    optimize_mesh_nodes)
 
     return new_node

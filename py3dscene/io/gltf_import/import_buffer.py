@@ -1,7 +1,6 @@
 import struct
 from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
 from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Buffer as GLTFBuffer  # type: ignore
 from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
 from py3dscene.bin.tiny_gltf import get_component_size_in_bytes
 from py3dscene.bin.tiny_gltf import get_num_components_in_type
@@ -33,14 +32,14 @@ def component_type_to_format(type: int) -> str:
         return "d"
     return "i"
 
-def read_float_buffer_view(model: GLTFModel,
-                           buffer_view: GLTFBufferView, 
+def read_float_buffer_view(buffer_view: GLTFBufferView, 
+                           model_buffers_data: list[list[int]],
                            component_type: int,
                            byte_offset: int,
                            components: int,
                            count: int,
                            decode_normalized: bool) -> list[float]:
-    buffer: GLTFBuffer = model.buffers[buffer_view.buffer]
+    buffer_data: list[int] = model_buffers_data[buffer_view.buffer]
     component_size: int = get_component_size_in_bytes(component_type)
     byte_stride: int = components * component_size if buffer_view.byte_stride == 0 else buffer_view.byte_stride
     index_stride: int = byte_stride // component_size
@@ -49,7 +48,7 @@ def read_float_buffer_view(model: GLTFModel,
     for i in range(count):
         for c in range(components):
             buffer_start = buffer_view.byte_offset + byte_offset + (i * index_stride + c) * component_size
-            buffer_part = buffer.data[buffer_start:buffer_start + component_size]
+            buffer_part = buffer_data[buffer_start:buffer_start + component_size]
             value: float = float(struct.unpack(component_type_to_format(component_type), bytearray(buffer_part))[0])
 
             if component_type == TINYGLTF_COMPONENT_TYPE_FLOAT:
@@ -73,20 +72,21 @@ def read_float_buffer_view(model: GLTFModel,
 
 def get_float_buffer(model: GLTFModel,
                      accessor: GLTFAccessor,
+                     model_buffers_data: list[list[int]],
                      decode_normalized: bool=False) -> list[float]:
     components: int = get_num_components_in_type(accessor.type)
     component_type: int = accessor.component_type
     buffer_view: GLTFBufferView = model.buffer_views[accessor.buffer_view]
 
-    return read_float_buffer_view(model, buffer_view, component_type, accessor.byte_offset, components, accessor.count, decode_normalized)
+    return read_float_buffer_view(buffer_view, model_buffers_data, component_type, accessor.byte_offset, components, accessor.count, decode_normalized)
 
-def read_integer_buffer_view(model: GLTFModel,
-                             buffer_view: GLTFBufferView,
+def read_integer_buffer_view(buffer_view: GLTFBufferView,
+                             model_buffers_data: list[list[int]],
                              component_type: int,
                              byte_offset: int,
                              components: int,
                              count: int) -> list[int]:
-    buffer: GLTFBuffer = model.buffers[buffer_view.buffer]
+    buffer_data: list[int] = model_buffers_data[buffer_view.buffer]
     component_size: int = get_component_size_in_bytes(component_type)
     byte_stride: int = components * component_size if buffer_view.byte_stride == 0 else buffer_view.byte_stride
     index_stride: int = byte_stride // component_size
@@ -95,16 +95,17 @@ def read_integer_buffer_view(model: GLTFModel,
     for i in range(count):
         for c in range(components):
             buffer_start: int = buffer_view.byte_offset + byte_offset + (i * index_stride + c) * component_size
-            buffer_part = buffer.data[buffer_start:buffer_start + component_size]
+            buffer_part = buffer_data[buffer_start:buffer_start + component_size]
             value: int = struct.unpack(component_type_to_format(component_type), bytearray(buffer_part))[0]
             to_return[components * i + c] = value
 
     return to_return
 
 def get_integer_buffer(model: GLTFModel,
-                       accessor: GLTFAccessor) -> list[int]:
+                       accessor: GLTFAccessor,
+                       model_buffers_data: list[list[int]]) -> list[int]:
     components: int = get_num_components_in_type(accessor.type)
     component_type: int = accessor.component_type
     
     buffer_view: GLTFBufferView = model.buffer_views[accessor.buffer_view]
-    return read_integer_buffer_view(model, buffer_view, component_type, accessor.byte_offset, components, accessor.count)
+    return read_integer_buffer_view(buffer_view, model_buffers_data, component_type, accessor.byte_offset, components, accessor.count)

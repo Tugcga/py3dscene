@@ -155,7 +155,7 @@ def export_materials(output_folder: str,
                 gltf_occlusion: GLTFOcclusionTextureInfo = GLTFOcclusionTextureInfo()
                 gltf_occlusion.index = texture_info.index
                 gltf_occlusion.tex_coord = texture_info.tex_coord
-                gltf_occlusion.scale = material.get_occlusion_texture_strength()
+                gltf_occlusion.strength = material.get_occlusion_texture_strength()
                 gltf_material.occlusion_texture = gltf_occlusion
 
         emission_path: Optional[str] = material.get_emissive_texture_path()

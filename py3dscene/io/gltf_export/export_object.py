@@ -21,7 +21,8 @@ def export_iterate(gltf_model_buffers_data: list[int],
                    exported_objects: set[int],
 	               materials_map: dict[int, int],
 	               envelope_meshes: list[Object],
-	               object_to_node: dict[int, int]) -> int:
+	               object_to_node: dict[int, int],
+                   optimize_mesh_nodes: bool) -> int:
     node_index: int = -1
     gltf_node: Optional[GLTFNode] = None
     object_id: int = object.get_id()
@@ -43,7 +44,8 @@ def export_iterate(gltf_model_buffers_data: list[int],
                                 gltf_model_accessors,
                                 gltf_model_meshes,
                                 materials_map,
-                                envelope_meshes)
+                                envelope_meshes,
+                                optimize_mesh_nodes)
 
     if gltf_node:
         exported_objects.add(object_id)
@@ -63,7 +65,8 @@ def export_iterate(gltf_model_buffers_data: list[int],
                                          exported_objects,
                                          materials_map,
                                          envelope_meshes,
-                                         object_to_node)
+                                         object_to_node,
+                                         optimize_mesh_nodes)
             if child_index >= 0:
                 gltf_node_children.append(child_index)
         

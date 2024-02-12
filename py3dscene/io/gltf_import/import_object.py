@@ -15,6 +15,7 @@ from py3dscene.io.gltf_import.import_light import import_object_light
 
 def process_node(gltf_model: GLTFModel,
                  gltf_node: GLTFNode,
+                 model_buffers_data: list[list[int]],
                  gltf_node_index: int,
                  scene: Scene,
                  parent: Optional[Object],
@@ -31,12 +32,12 @@ def process_node(gltf_model: GLTFModel,
     
     # assign local transform
     object.set_local_tfm(local_tfm)
-
+    
     if gltf_node.mesh >= 0 and gltf_node.mesh < len(gltf_model.meshes):
         # current node contains a mesh component
         gltf_mesh: GLTFMesh = gltf_model.meshes[gltf_node.mesh]
         envelop_map: dict[int, list[float]] = {}
-        import_object_mesh(gltf_model, gltf_mesh, object, materials_map, envelop_map)
+        import_object_mesh(gltf_model, gltf_mesh, model_buffers_data, object, materials_map, envelop_map)
 
         if gltf_node.skin > 0 and len(envelop_map.keys()) > 0:
             envelopes.append((gltf_node.skin, object, envelop_map))
@@ -52,4 +53,12 @@ def process_node(gltf_model: GLTFModel,
     nodes_map[gltf_node_index] = object
 
     for i in range(len(gltf_node.children)):
-        process_node(gltf_model, gltf_model.nodes[gltf_node.children[i]], gltf_node.children[i], scene, object, materials_map, nodes_map, envelopes)
+        process_node(gltf_model,
+                     gltf_model.nodes[gltf_node.children[i]],
+                     model_buffers_data,
+                     gltf_node.children[i],
+                     scene,
+                     object,
+                     materials_map,
+                     nodes_map,
+                     envelopes)

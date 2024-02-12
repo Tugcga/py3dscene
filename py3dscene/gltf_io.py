@@ -38,6 +38,11 @@ def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     '''
     gltf_model: GLTFModel = load_gltf(file_path)
     gltf_scene: GLTFScene = gltf_model.scenes[gltf_model.default_scene if gltf_model.default_scene > -1 else 0]
+    model_buffers_data: list[list[int]] = []
+    model_buffers: list[GLTFBuffer] = gltf_model.buffers
+    for i in range(len(model_buffers)):
+        gltf_buffer: GLTFBuffer = model_buffers[i]
+        model_buffers_data.append(gltf_buffer.data)
 
     scene: Scene = Scene()
 
@@ -62,7 +67,14 @@ def from_gltf(file_path: str, fps: float=30.0) -> Scene:
     #       value - weights for the mesh
     envelopes: list[tuple[int, Object, dict[int, list[float]]]] = []
     for i in range(len(gltf_scene.nodes)):
-        process_node(gltf_model, gltf_model.nodes[gltf_scene.nodes[i]], gltf_scene.nodes[i], scene, None, materials_map, nodes_map, envelopes)
+        process_node(gltf_model,
+                     gltf_model.nodes[gltf_scene.nodes[i]],
+                     model_buffers_data,
+                     gltf_scene.nodes[i],
+                     scene,
+                     None,
+                     materials_map,
+                     nodes_map, envelopes)
     
     # after nodes import skin data
     # TODO: implement store object skinning
@@ -71,15 +83,36 @@ def from_gltf(file_path: str, fps: float=30.0) -> Scene:
         import_object_skin(gltf_model, envelop_data[1], envelop_data[0], envelop_data[2], nodes_map)
     
     # finally animations
-    import_animations(gltf_model, nodes_map, fps)
+    import_animations(gltf_model, model_buffers_data, nodes_map, fps)
 
     return scene
 
 def to_gltf(scene: Scene,
             file_path: str,
+            optimize_mesh_nodes: bool=False,
             embed_images: bool=False,
             embed_buffers: bool=False,
             fps: float=30.0):
+    '''Export scene object as gltf or glb file
+    Parameters:
+    file_path: full output path with extension
+    optimize_mesh_nodes: if True, then in the export process the module try to reduce the number of vertices in the output meshes
+        in the mesh it's possible to have one vertex and different normals in polygons incident to this vertex
+        if optimization is ON, then the exporter check is polygon nodes have different attributes or not
+        if at least one attribute (position, normal, uv etc) is different, then it creates the new vertex
+        if all attributes the same, then use the same vertex
+        but this process is long for dense mesh
+        so, it's possible to deactivate this flag
+        it the flag is False then the output mesh have the same vertices as it is, node attributes are override by last node
+        if the mesh is imported from glTF, then it's ok, because all vertices already are splitted by difference in node attributes
+    embed_images: if True then embed image data into output file and does not create separate texture files
+        if False then textures are stored in the same directory as the output file
+    embed_buffers: if True then hte binary buffer is embedded into output file
+        if False then create the separate file *.bin
+    fps: the number of frames per second for exporting animations
+        in 3d-scene animations are stored by using key-frames, but in glTF it use seconds
+        so, fps used for converting frames to seconds
+    '''
     # extract output extension
     ext_str: str = file_path.split(".")[-1].lower()
     if ext_str not in ["glb", "gltf"]:
@@ -142,9 +175,11 @@ def to_gltf(scene: Scene,
                                                exported_objects,
                                                materials_map,
                                                envelope_meshes,
-                                               object_to_node)
+                                               object_to_node,
+                                               optimize_mesh_nodes)
         if scene_node_index >= 0:
             gltf_scene_nodes.append(scene_node_index)
+
     gltf_scene.nodes = gltf_scene_nodes
     gltf_model.nodes = gltf_model_nodes
     gltf_model.cameras = gltf_model_cameras

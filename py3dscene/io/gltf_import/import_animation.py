@@ -9,6 +9,7 @@ from py3dscene.animation import Animation
 from py3dscene.animation import AnimationCurveType
 
 def import_animations(gltf_model: GLTFModel,
+                      model_buffers_data: list[list[int]],
                       nodes_map: dict[int, Object],
                       fps: float):
     for anim_index in range(len(gltf_model.animations)):
@@ -23,8 +24,8 @@ def import_animations(gltf_model: GLTFModel,
                 time_accessor: GLTFAccessor = gltf_model.accessors[sampler.input]
                 values_accessor: GLTFAccessor = gltf_model.accessors[sampler.output]
                 curve_type: AnimationCurveType = AnimationCurveType.CUBICSPLINE if sampler.interpolation == "CUBICSPLINE" else (AnimationCurveType.STEP if sampler.interpolation == "STEP" else AnimationCurveType.LINEAR)
-                times: list[float] = get_float_buffer(gltf_model, time_accessor)
-                values: list[float] = get_float_buffer(gltf_model, values_accessor, True)
+                times: list[float] = get_float_buffer(gltf_model, time_accessor, model_buffers_data)
+                values: list[float] = get_float_buffer(gltf_model, values_accessor, model_buffers_data, True)
                 if len(times) > 0 and len(values) > 0:
                     # for cubic curve each key defined by 3 values
                     # for linear and step only by 1 value

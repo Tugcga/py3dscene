@@ -105,7 +105,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                 object: Object,
 	            materials_map: dict[int, int],
                 # TODO: implement export skin and use envelope_meshes
-	            envelope_meshes: list[Object]):
+	            envelope_meshes: list[Object],
+                optimize_mesh_nodes: bool):
     gltf_mesh: GLTFMesh = GLTFMesh()
     gltf_mesh_primitives: list[GLTFPrimitive] = []
     for mesh in object.get_mesh_components():
@@ -124,7 +125,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
         # store in separate list all vertices we should export
         # if node in the mesh have the same position and attributes, then it's the same vertex
         # but if at least one attribute is different, then create the new vertex
-        vertices: list[VertexType] = []
+        vertices: list[VertexType] = [] if optimize_mesh_nodes else [((0.0, 0.0, 0.0),
+                                                                      [], [], [], [], [])] * len(mesh_vertices)
         # here we will store actual triangles for export
         # with indices of vertices from the previous array
         triangles: list[tuple[int, int, int]] = []
@@ -141,14 +143,18 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                       mesh.get_node_colors(n_index),
                                       mesh.get_node_tangents(n_index),
                                       mesh.get_vertex_shapes(v_index))
-                # check is this vertex is new
-                index: int = get_index_from_vertex_array(vertices, vertex)
-                if index == -1:
-                    # this is new vertex, add it to the array
-                    index = len(vertices)
-                    vertices.append(vertex)
-                # now index has the proper value
-                triangle_array.append(index)
+                if optimize_mesh_nodes:
+                    # check is this vertex is new
+                    index: int = get_index_from_vertex_array(vertices, vertex)
+                    if index == -1:
+                        # this is new vertex, add it to the array
+                        index = len(vertices)
+                        vertices.append(vertex)
+                    # now index has the proper value
+                    triangle_array.append(index)
+                else:
+                    vertices[v_index] = vertex
+                    triangle_array.append(v_index)
             triangles.append((triangle_array[0], triangle_array[1], triangle_array[2]))
         # next we should write mesh data into gltf mesh primitive
         gltf_primitive.mode = TINYGLTF_MODE_TRIANGLES
