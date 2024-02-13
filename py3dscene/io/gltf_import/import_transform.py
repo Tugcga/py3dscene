@@ -1,4 +1,4 @@
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.transform import Transform
 from py3dscene.transform import get_srt_matrix
 
@@ -14,7 +14,7 @@ Also the last row is zero (0.0, 0.0, 0.0, 1.0), and the last column contains pos
 We will be use the second approach
 '''
 
-def import_transform(gltf_node: GLTFNode) -> Transform:
+def import_transform(gltf_node: tiny_gltf.Node) -> Transform:
     gltf_mat = gltf_node.matrix
     if len(gltf_mat) == 0:
         gltf_translation: list[float] = gltf_node.translation

@@ -1,49 +1,40 @@
 import os
 from typing import Optional
-from py3dscene.bin.tiny_gltf import Material as GLTFMaterial  # type: ignore
-from py3dscene.bin.tiny_gltf import Texture as GLTFTexture  # type: ignore
-from py3dscene.bin.tiny_gltf import Image as GLTFImage  # type: ignore
-from py3dscene.bin.tiny_gltf import TextureInfo as GLTFTextureInfo  # type: ignore
-from py3dscene.bin.tiny_gltf import NormalTextureInfo as GLTFNormalTextureInfo  # type: ignore
-from py3dscene.bin.tiny_gltf import OcclusionTextureInfo as GLTFOcclusionTextureInfo  # type: ignore
-from py3dscene.bin.tiny_gltf import PbrMetallicRoughness as GLTFPbrMetallicRoughness  # type: ignore
-from py3dscene.bin.tiny_gltf import get_image_info
-from py3dscene.bin.tiny_gltf import load_image
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE
+from py3dscene.bin import tiny_gltf
 from py3dscene.material import PBRMaterial
 from py3dscene.material import AlphaMode
 
-def export_texture(gltf_model_textures: list[GLTFTexture],
-                   gltf_model_images: list[GLTFImage],
+def export_texture(gltf_model_textures: list[tiny_gltf.Texture],
+                   gltf_model_images: list[tiny_gltf.Image],
                    texture_path: str,
                    output_folder: str) -> int:
     # extract texture name
     texture_path_norm = texture_path.replace("/", "\\")
     output_folder_norm = output_folder.replace("/", "\\")
     texture_name = ".".join(texture_path_norm.split("\\")[-1].split(".")[:-1])
-    image_info: list[int] = get_image_info(texture_path)
+    image_info: list[int] = tiny_gltf.get_image_info(texture_path)
     # image_info in format: width, height, channels, os_ok (1 or 0)
     if image_info[-1] == 1:
         width: int = image_info[0]
         height: int = image_info[1]
         channels: int = image_info[2]
 
-        gltf_image: GLTFImage = GLTFImage()
+        gltf_image = tiny_gltf.Image()
         gltf_image.name = texture_name
         gltf_image.width = width
         gltf_image.height = height
         gltf_image.component = channels
         gltf_image.bits = 8
 
-        pixels = load_image(texture_path)
+        pixels = tiny_gltf.load_image(texture_path)
         gltf_image.image = pixels
         gltf_image.uri = os.path.relpath(texture_path_norm, output_folder_norm)
-        gltf_image.pixel_type = TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE
+        gltf_image.pixel_type = tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE
 
         image_index: int = len(gltf_model_images)
         gltf_model_images.append(gltf_image)
 
-        gltf_texture: GLTFTexture = GLTFTexture()
+        gltf_texture = tiny_gltf.Texture()
         gltf_texture.name = texture_name
         gltf_texture.source = image_index
         gltf_model_textures.append(gltf_texture)
@@ -53,10 +44,10 @@ def export_texture(gltf_model_textures: list[GLTFTexture],
 
 def assign_texture(texture_path: str,
                    textures_map: dict[str, int],
-                   gltf_model_textures: list[GLTFTexture],
-                   gltf_model_images: list[GLTFImage],
+                   gltf_model_textures: list[tiny_gltf.Texture],
+                   gltf_model_images: list[tiny_gltf.Image],
                    output_folder: str,
-                   uv_index: Optional[int]) -> Optional[GLTFTextureInfo]:
+                   uv_index: Optional[int]) -> Optional[tiny_gltf.TextureInfo]:
     texture_index: int = -1
     if texture_path in textures_map:
         texture_index = textures_map[texture_path]
@@ -68,7 +59,7 @@ def assign_texture(texture_path: str,
         textures_map[texture_path] = texture_index
 
     if texture_index >= 0 and uv_index is not None:
-        texture_info: GLTFTextureInfo = GLTFTextureInfo()
+        texture_info = tiny_gltf.TextureInfo()
         texture_info.index = texture_index
         texture_info.tex_coord = uv_index
         return texture_info
@@ -77,16 +68,16 @@ def assign_texture(texture_path: str,
 
 def export_materials(output_folder: str,
                      materials: list[PBRMaterial],
-                     gltf_model_materials: list[GLTFMaterial],
-                     gltf_model_textures: list[GLTFTexture],
-                     gltf_model_images: list[GLTFImage],
+                     gltf_model_materials: list[tiny_gltf.Material],
+                     gltf_model_textures: list[tiny_gltf.Texture],
+                     gltf_model_images: list[tiny_gltf.Image],
                      materials_map: dict[int, int]):
     # some materials can use the same textures
     # export each used texture once and then use the link
     textures_map: dict[str, int] = {}  # key - path to the texture, value - index in glTF model
     for material in materials:
         material_id: int = material.get_id()
-        gltf_material: GLTFMaterial = GLTFMaterial()
+        gltf_material = tiny_gltf.Material()
         gltf_material.name = material.get_name()
         alpha_mode: AlphaMode = material.get_alpha_mode()
         if alpha_mode == AlphaMode.MASK:
@@ -100,12 +91,12 @@ def export_materials(output_folder: str,
         gltf_material.double_sided = material.get_double_sided()
         gltf_material.emissive_factor = material.get_emissive()
 
-        gltf_pbr: GLTFPbrMetallicRoughness = GLTFPbrMetallicRoughness()
+        gltf_pbr = tiny_gltf.PbrMetallicRoughness()
         gltf_pbr.base_color_factor = material.get_albedo()
         gltf_pbr.metallic_factor = material.get_metalness()
         gltf_pbr.roughness_factor = material.get_roughness()
         albedo_path: Optional[str] = material.get_albedo_texture_path()
-        texture_info: Optional[GLTFTextureInfo] = None
+        texture_info: Optional[tiny_gltf.TextureInfo] = None
         if albedo_path:
             texture_info = assign_texture(albedo_path,
                                           textures_map,
@@ -137,7 +128,7 @@ def export_materials(output_folder: str,
                                           output_folder,
                                           material.get_normal_texture_uv())
             if texture_info:
-                gltf_normal: GLTFNormalTextureInfo = GLTFNormalTextureInfo()
+                gltf_normal = tiny_gltf.NormalTextureInfo()
                 gltf_normal.index = texture_info.index
                 gltf_normal.tex_coord = texture_info.tex_coord
                 gltf_normal.scale = material.get_normal_texture_strength()
@@ -152,7 +143,7 @@ def export_materials(output_folder: str,
                                           output_folder,
                                           material.get_occlusion_texture_uv())
             if texture_info:
-                gltf_occlusion: GLTFOcclusionTextureInfo = GLTFOcclusionTextureInfo()
+                gltf_occlusion = tiny_gltf.OcclusionTextureInfo()
                 gltf_occlusion.index = texture_info.index
                 gltf_occlusion.tex_coord = texture_info.tex_coord
                 gltf_occlusion.strength = material.get_occlusion_texture_strength()

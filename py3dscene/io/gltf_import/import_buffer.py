@@ -1,38 +1,26 @@
 import struct
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
-from py3dscene.bin.tiny_gltf import get_component_size_in_bytes
-from py3dscene.bin.tiny_gltf import get_num_components_in_type
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_BYTE
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_SHORT
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_INT
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_FLOAT
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_DOUBLE
+from py3dscene.bin import tiny_gltf
 
 def component_type_to_format(type: int) -> str:
-    if type == TINYGLTF_COMPONENT_TYPE_BYTE:
+    if type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_BYTE:
         return "c"
-    elif type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
         return "B"
-    elif type == TINYGLTF_COMPONENT_TYPE_SHORT:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_SHORT:
         return "h"
-    elif type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
         return "H"
-    elif type == TINYGLTF_COMPONENT_TYPE_INT:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_INT:
         return "i"
-    elif type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
         return "I"
-    elif type == TINYGLTF_COMPONENT_TYPE_FLOAT:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT:
         return "f"
-    elif type == TINYGLTF_COMPONENT_TYPE_DOUBLE:
+    elif type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_DOUBLE:
         return "d"
     return "i"
 
-def read_float_buffer_view(buffer_view: GLTFBufferView, 
+def read_float_buffer_view(buffer_view: tiny_gltf.BufferView, 
                            model_buffers_data: list[list[int]],
                            component_type: int,
                            byte_offset: int,
@@ -40,7 +28,7 @@ def read_float_buffer_view(buffer_view: GLTFBufferView,
                            count: int,
                            decode_normalized: bool) -> list[float]:
     buffer_data: list[int] = model_buffers_data[buffer_view.buffer]
-    component_size: int = get_component_size_in_bytes(component_type)
+    component_size: int = tiny_gltf.get_component_size_in_bytes(component_type)
     byte_stride: int = components * component_size if buffer_view.byte_stride == 0 else buffer_view.byte_stride
     index_stride: int = byte_stride // component_size
 
@@ -51,43 +39,43 @@ def read_float_buffer_view(buffer_view: GLTFBufferView,
             buffer_part = buffer_data[buffer_start:buffer_start + component_size]
             value: float = float(struct.unpack(component_type_to_format(component_type), bytearray(buffer_part))[0])
 
-            if component_type == TINYGLTF_COMPONENT_TYPE_FLOAT:
+            if component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT:
                 to_return[components * i + c] = value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
                 to_return[components * i + c] = value / 255.0 if decode_normalized else value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
                 to_return[components * i + c] = value / 65535.0 if decode_normalized else value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
                 to_return[components * i + c] = value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_BYTE:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_BYTE:
                 to_return[components * i + c] = value / 127.0 if decode_normalized else value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_SHORT:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_SHORT:
                 to_return[components * i + c] = value / 32767.0 if decode_normalized else value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_INT:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_INT:
                 to_return[components * i + c] = value
-            elif component_type == TINYGLTF_COMPONENT_TYPE_DOUBLE:
+            elif component_type == tiny_gltf.TINYGLTF_COMPONENT_TYPE_DOUBLE:
                 to_return[components * i + c] = value
 
     return to_return
 
-def get_float_buffer(model: GLTFModel,
-                     accessor: GLTFAccessor,
+def get_float_buffer(model: tiny_gltf.Model,
+                     accessor: tiny_gltf.Accessor,
                      model_buffers_data: list[list[int]],
                      decode_normalized: bool=False) -> list[float]:
-    components: int = get_num_components_in_type(accessor.type)
+    components: int = tiny_gltf.get_num_components_in_type(accessor.type)
     component_type: int = accessor.component_type
-    buffer_view: GLTFBufferView = model.buffer_views[accessor.buffer_view]
+    buffer_view: tiny_gltf.BufferView = model.buffer_views[accessor.buffer_view]
 
     return read_float_buffer_view(buffer_view, model_buffers_data, component_type, accessor.byte_offset, components, accessor.count, decode_normalized)
 
-def read_integer_buffer_view(buffer_view: GLTFBufferView,
+def read_integer_buffer_view(buffer_view: tiny_gltf.BufferView,
                              model_buffers_data: list[list[int]],
                              component_type: int,
                              byte_offset: int,
                              components: int,
                              count: int) -> list[int]:
     buffer_data: list[int] = model_buffers_data[buffer_view.buffer]
-    component_size: int = get_component_size_in_bytes(component_type)
+    component_size: int = tiny_gltf.get_component_size_in_bytes(component_type)
     byte_stride: int = components * component_size if buffer_view.byte_stride == 0 else buffer_view.byte_stride
     index_stride: int = byte_stride // component_size
     to_return: list[int] = [0] * (components * count)
@@ -101,11 +89,11 @@ def read_integer_buffer_view(buffer_view: GLTFBufferView,
 
     return to_return
 
-def get_integer_buffer(model: GLTFModel,
-                       accessor: GLTFAccessor,
+def get_integer_buffer(model: tiny_gltf.Model,
+                       accessor: tiny_gltf.Accessor,
                        model_buffers_data: list[list[int]]) -> list[int]:
-    components: int = get_num_components_in_type(accessor.type)
+    components: int = tiny_gltf.get_num_components_in_type(accessor.type)
     component_type: int = accessor.component_type
     
-    buffer_view: GLTFBufferView = model.buffer_views[accessor.buffer_view]
+    buffer_view: tiny_gltf.BufferView = model.buffer_views[accessor.buffer_view]
     return read_integer_buffer_view(buffer_view, model_buffers_data, component_type, accessor.byte_offset, components, accessor.count)

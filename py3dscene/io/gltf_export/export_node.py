@@ -1,21 +1,18 @@
 from typing import Optional
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
-from py3dscene.bin.tiny_gltf import Mesh as GLTFMesh  # type: ignore
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_export.export_transform import export_transform
 from py3dscene.io.gltf_export.export_mesh import export_mesh
 from py3dscene.object import Object
 
 def export_node(object: Object,
                 gltf_model_buffers_data: list[int],
-                gltf_model_buffer_views: list[GLTFBufferView],
-                gltf_model_accessors: list[GLTFAccessor],
-                gltf_model_meshes: list[GLTFMesh],
+                gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                gltf_model_accessors: list[tiny_gltf.Accessor],
+                gltf_model_meshes: list[tiny_gltf.Mesh],
                 materials_map: dict[int, int],
 	            envelope_meshes: list[Object],
-                optimize_mesh_nodes: bool) -> Optional[GLTFNode]:
-    new_node: GLTFNode = GLTFNode()
+                optimize_mesh_nodes: bool) -> Optional[tiny_gltf.Node]:
+    new_node = tiny_gltf.Node()
     new_node.name = object.get_name()
 
     # TODO: skip export transform for skinned mesh object

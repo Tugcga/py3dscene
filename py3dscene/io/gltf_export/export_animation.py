@@ -1,15 +1,7 @@
 from typing import Optional
 import sys
 import struct
-from py3dscene.bin.tiny_gltf import AnimationSampler as GLTFAnimationSampler  # type: ignore
-from py3dscene.bin.tiny_gltf import AnimationChannel as GLTFAnimationChannel  # type: ignore
-from py3dscene.bin.tiny_gltf import Animation as GLTFAnimation  # type: ignore
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_FLOAT
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_SCALAR
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_VEC3
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_VEC4
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_export.export_buffer import add_data_to_buffer
 from py3dscene.scene import Scene
 from py3dscene.object import Object
@@ -18,10 +10,10 @@ from py3dscene.animation import AnimationCurveType
 from py3dscene.animation import ValuesVariants
 
 def write_animation_clip(gltf_model_buffers_data: list[int],
-                         gltf_model_buffer_views: list[GLTFBufferView],
-                         gltf_model_accessors: list[GLTFAccessor],
-                         gltf_animation_samplers: list[GLTFAnimationSampler],
-                         gltf_animation_channels: list[GLTFAnimationChannel],
+                         gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                         gltf_model_accessors: list[tiny_gltf.Accessor],
+                         gltf_animation_samplers: list[tiny_gltf.AnimationSampler],
+                         gltf_animation_channels: list[tiny_gltf.AnimationChannel],
                          animation: Animation,
                          target_str: str,
                          node_index: int,
@@ -73,8 +65,8 @@ def write_animation_clip(gltf_model_buffers_data: list[int],
                                          times_count,
                                          False,
                                          True,
-                                         TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                         TINYGLTF_TYPE_SCALAR,
+                                         tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                         tiny_gltf.TINYGLTF_TYPE_SCALAR,
                                          [times_array[0]],
                                          [times_array[-1]])
     values_index: int = add_data_to_buffer(gltf_model_buffers_data,
@@ -84,34 +76,34 @@ def write_animation_clip(gltf_model_buffers_data: list[int],
                                            times_count * 3 if curve_type == AnimationCurveType.CUBICSPLINE else times_count,
                                            False,
                                            True,
-                                           TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                           TINYGLTF_TYPE_VEC3 if value_components == 3 else TINYGLTF_TYPE_VEC4,
+                                           tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                           tiny_gltf.TINYGLTF_TYPE_VEC3 if value_components == 3 else tiny_gltf.TINYGLTF_TYPE_VEC4,
                                            min_values,
                                            max_values)
     
     # next write accessor indices to animation objects
-    gltf_sampler: GLTFAnimationSampler = GLTFAnimationSampler()
+    gltf_sampler = tiny_gltf.AnimationSampler()
     gltf_sampler.interpolation = "CUBICSPLINE" if curve_type == AnimationCurveType.CUBICSPLINE else ("STEP" if curve_type == AnimationCurveType.STEP else "LINEAR")
     gltf_sampler.input = time_index
     gltf_sampler.output = values_index
 
     sampler_index: int = len(gltf_animation_samplers)
     gltf_animation_samplers.append(gltf_sampler)
-    channel: GLTFAnimationChannel = GLTFAnimationChannel()
+    channel = tiny_gltf.AnimationChannel()
     channel.sampler = sampler_index
     channel.target_node = node_index
     channel.target_path = target_str
     gltf_animation_channels.append(channel)
 
 def export_object_animation(gltf_model_buffers_data: list[int],
-                            gltf_model_buffer_views: list[GLTFBufferView],
-                            gltf_model_accessors: list[GLTFAccessor],
-                            gltf_model_animations: list[GLTFAnimation],
+                            gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                            gltf_model_accessors: list[tiny_gltf.Accessor],
+                            gltf_model_animations: list[tiny_gltf.Animation],
                             object_to_node: dict[int, int],
                             object: Object,
                             fps: float):
-    gltf_animation_samplers: list[GLTFAnimationSampler] = []
-    gltf_animation_channels: list[GLTFAnimationChannel] = []
+    gltf_animation_samplers: list[tiny_gltf.AnimationSampler] = []
+    gltf_animation_channels: list[tiny_gltf.AnimationChannel] = []
 
     translation_anim: Optional[Animation] = object.get_translation_animation()
     rotation_anim: Optional[Animation] = object.get_rotation_animation()
@@ -155,7 +147,7 @@ def export_object_animation(gltf_model_buffers_data: list[int],
                              fps)
 
     if len(gltf_animation_samplers) > 0 and len(gltf_animation_channels) > 0:
-        gltf_animation: GLTFAnimation = GLTFAnimation()
+        gltf_animation = tiny_gltf.Animation()
         gltf_animation.samplers = gltf_animation_samplers
         gltf_animation.channels = gltf_animation_channels
         gltf_animation.name = object.get_name()
@@ -171,12 +163,12 @@ def export_object_animation(gltf_model_buffers_data: list[int],
                                 fps)
 
 def export_animation(gltf_model_buffers_data: list[int],
-                     gltf_model_buffer_views: list[GLTFBufferView],
-                     gltf_model_accessors: list[GLTFAccessor],
+                     gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                     gltf_model_accessors: list[tiny_gltf.Accessor],
                      scene: Scene,
                      fps: float,
-                     object_to_node: dict[int, int]) -> list[GLTFAnimation]:
-    gltf_model_animations: list[GLTFAnimation] = []
+                     object_to_node: dict[int, int]) -> list[tiny_gltf.Animation]:
+    gltf_model_animations: list[tiny_gltf.Animation] = []
     for obj in scene.get_root_objects():
         export_object_animation(gltf_model_buffers_data,
                                 gltf_model_buffer_views,

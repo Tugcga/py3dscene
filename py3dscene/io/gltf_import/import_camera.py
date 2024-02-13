@@ -1,10 +1,9 @@
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import Camera as GLTFCamera  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.object import Object
 from py3dscene.camera import CameraComponent
 from py3dscene.camera import CameraType
 
-def import_object_camera(gltf_camera: GLTFCamera,
+def import_object_camera(gltf_camera: tiny_gltf.Camera,
                          object: Object):
     gltf_type = gltf_camera.type
     camera: CameraComponent = CameraComponent()

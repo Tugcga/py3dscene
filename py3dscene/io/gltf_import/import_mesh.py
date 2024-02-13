@@ -1,11 +1,5 @@
 import struct
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import Mesh as GLTFMesh  # type: ignore
-from py3dscene.bin.tiny_gltf import Primitive as GLTFPrimitive  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import get_component_size_in_bytes
-from py3dscene.bin.tiny_gltf import get_num_components_in_type
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_import.import_buffer import component_type_to_format
 from py3dscene.io.gltf_import.import_buffer import get_float_buffer
 from py3dscene.io.gltf_import.import_buffer import get_integer_buffer
@@ -15,21 +9,21 @@ from py3dscene.object import Object
 from py3dscene.material import PBRMaterial
 from py3dscene.mesh import MeshComponent
 
-def get_polygon_indices(model: GLTFModel,
-                        primitive: GLTFPrimitive,
+def get_polygon_indices(model: tiny_gltf.Model,
+                        primitive: tiny_gltf.Primitive,
                         model_buffers_data: list[list[int]],
                         first_index: int) -> list[int]:
     if primitive.indices >= 0:
-        polygon_accessor: GLTFAccessor = model.accessors[primitive.indices]
+        polygon_accessor: tiny_gltf.Accessor = model.accessors[primitive.indices]
         component_type: int = polygon_accessor.component_type
         to_return: list[int] = [0] * polygon_accessor.count
 
-        buffer_view: GLTFBufferView = model.buffer_views[polygon_accessor.buffer_view]
+        buffer_view: tiny_gltf.BufferView = model.buffer_views[polygon_accessor.buffer_view]
         buffer_data: list[int] = model_buffers_data[buffer_view.buffer]
 
         count: int = polygon_accessor.count
 
-        component_size: int = get_component_size_in_bytes(component_type)
+        component_size: int = tiny_gltf.get_component_size_in_bytes(component_type)
         byte_stride: int = component_size if buffer_view.byte_stride == 0 else buffer_view.byte_stride
         index_stride: int = byte_stride // component_size
 
@@ -50,14 +44,14 @@ def attribute_length(name: str) -> int:
     else:
         return 0
 
-def add_shape_target(gltf_model: GLTFModel,
+def add_shape_target(gltf_model: tiny_gltf.Model,
                      model_buffers_data: list[list[int]],
                      gltf_shape: dict[str, int],
                      shape_name: str,
                      mesh: MeshComponent):
     if shape_name in gltf_shape:
         acc_index: int = gltf_shape[shape_name]
-        shape_accessor: GLTFAccessor = gltf_model.accessors[acc_index]
+        shape_accessor: tiny_gltf.Accessor = gltf_model.accessors[acc_index]
         shape_values: list[float] = []
         if shape_accessor.sparse.is_sparse:
             values: list[float] = read_float_buffer_view(
@@ -65,7 +59,7 @@ def add_shape_target(gltf_model: GLTFModel,
                 gltf_model.buffer_views[shape_accessor.sparse.values.buffer_view],
                 shape_accessor.component_type,
                 shape_accessor.sparse.values.byte_offset,
-                get_num_components_in_type(shape_accessor.type),
+                tiny_gltf.get_num_components_in_type(shape_accessor.type),
                 shape_accessor.sparse.count,
                 False)
 
@@ -87,16 +81,16 @@ def add_shape_target(gltf_model: GLTFModel,
             shape_values = get_float_buffer(gltf_model, shape_accessor, model_buffers_data)
         mesh.add_shape([(shape_values[3 * i], shape_values[3 * i + 1], shape_values[3 * i + 2]) for i in range(len(shape_values) // 3)])
 
-def import_object_mesh(gltf_model: GLTFModel,
-                       gltf_mesh: GLTFMesh,
+def import_object_mesh(gltf_model: tiny_gltf.Model,
+                       gltf_mesh: tiny_gltf.Mesh,
                        model_buffers_data: list[list[int]],
                        object: Object,
                        materials_map: dict[int, PBRMaterial],
                        envelop_map: dict[int, list[float]]):
     for primitive_index in range(len(gltf_mesh.primitives)):
-        gltf_primitive: GLTFPrimitive = gltf_mesh.primitives[primitive_index]
+        gltf_primitive: tiny_gltf.Primitive = gltf_mesh.primitives[primitive_index]
         position_attr_index: int = gltf_primitive.attributes["POSITION"]
-        position_accessor: GLTFAccessor = gltf_model.accessors[position_attr_index]
+        position_accessor: tiny_gltf.Accessor = gltf_model.accessors[position_attr_index]
         positions: list[float] = get_float_buffer(gltf_model, position_accessor, model_buffers_data)
         if len(positions) == 0:
             continue
@@ -139,7 +133,7 @@ def import_object_mesh(gltf_model: GLTFModel,
         skin_weights: list[float] = []
             
         for attribute_name, attribute_acc in gltf_primitive.attributes.items():
-            accessor: GLTFAccessor = gltf_model.accessors[attribute_acc]
+            accessor: tiny_gltf.Accessor = gltf_model.accessors[attribute_acc]
             if attribute_name == "POSITION":
                 continue
 
@@ -171,7 +165,7 @@ def import_object_mesh(gltf_model: GLTFModel,
             elif attribute_name.find("COLOR") == 0:
                 colors: list[float] = get_float_buffer(gltf_model, accessor, model_buffers_data)
                 colors_attr_plain: list[float] = []
-                components: int = get_num_components_in_type(accessor.type)
+                components: int = tiny_gltf.get_num_components_in_type(accessor.type)
                 colors_type: int = accessor.component_type
                 for i in range(samples_count):
                     triangle_index = i // 3

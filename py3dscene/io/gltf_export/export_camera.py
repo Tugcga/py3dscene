@@ -1,8 +1,5 @@
 from typing import Optional
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
-from py3dscene.bin.tiny_gltf import Camera as GLTFCamera  # type: ignore
-from py3dscene.bin.tiny_gltf import OrthographicCamera as GLTFOrthographicCamera # type: ignore
-from py3dscene.bin.tiny_gltf import PerspectiveCamera as GLTFPerspectiveCamera # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_export.export_transform import export_transform
 from py3dscene.object import Object
 from py3dscene.camera import CameraComponent
@@ -10,8 +7,8 @@ from py3dscene.camera import CameraType
 
 def export_camera(camera: CameraComponent,
                   object: Object,
-                  gltf_model_cameras: list[GLTFCamera]) -> Optional[GLTFNode]:
-    new_node: GLTFNode = GLTFNode()
+                  gltf_model_cameras: list[tiny_gltf.Camera]) -> Optional[tiny_gltf.Node]:
+    new_node = tiny_gltf.Node()
 
     new_node.name = object.get_name()
     export_transform(new_node,
@@ -19,13 +16,13 @@ def export_camera(camera: CameraComponent,
                         object.get_translation(),
                         object.get_rotation(),
                         object.get_scale())
-    gltf_camera: GLTFCamera = GLTFCamera()
+    gltf_camera = tiny_gltf.Camera()
 
     type: CameraType = camera.get_type()
     if type == CameraType.PERSPECTIVE:
         gltf_camera.type = "perspective"
         gltf_camera.name = "perspective camera"
-        persp_camera: GLTFPerspectiveCamera = GLTFPerspectiveCamera()
+        persp_camera = tiny_gltf.PerspectiveCamera()
         persp_camera.yfov = camera.get_perspective_fov()
         
         persp_camera.aspect_ratio = camera.get_perspective_aspect()
@@ -37,7 +34,7 @@ def export_camera(camera: CameraComponent,
     elif type == CameraType.ORTHOGRAPHIC:
         gltf_camera.type = "orthographic"
         gltf_camera.name = "orthographic camera"
-        ortho_camera: GLTFOrthographicCamera = GLTFOrthographicCamera()
+        ortho_camera = tiny_gltf.OrthographicCamera()
         ortho_camera.ymag = camera.get_orthographic_height()
         ortho_camera.xmag = camera.get_orthographic_width()
 

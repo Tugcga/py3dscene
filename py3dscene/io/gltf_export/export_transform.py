@@ -1,7 +1,7 @@
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.transform import Transform
 
-def export_transform(gltf_node: GLTFNode,
+def export_transform(gltf_node: tiny_gltf.Node,
                      tfm: Transform,
                      translation: tuple[float, float, float],
                      rotation: tuple[float, float, float, float],

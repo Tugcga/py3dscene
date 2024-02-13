@@ -1,18 +1,7 @@
 import math
 import struct
 import sys
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
-from py3dscene.bin.tiny_gltf import Mesh as GLTFMesh  # type: ignore
-from py3dscene.bin.tiny_gltf import Primitive as GLTFPrimitive  # type: ignore
-from py3dscene.bin.tiny_gltf import TINYGLTF_MODE_TRIANGLES
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_SCALAR
-from py3dscene.bin.tiny_gltf import TINYGLTF_COMPONENT_TYPE_FLOAT
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_VEC2
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_VEC3
-from py3dscene.bin.tiny_gltf import TINYGLTF_TYPE_VEC4
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_export.export_buffer import add_triangle_indices_to_buffer
 from py3dscene.io.gltf_export.export_buffer import add_data_to_buffer
 from py3dscene.object import Object
@@ -98,19 +87,19 @@ def get_index_from_vertex_array(array: list[VertexType], value: VertexType) -> i
     return -1
 
 def export_mesh(gltf_model_buffers_data: list[int],
-                gltf_model_buffer_views: list[GLTFBufferView],
-                gltf_model_accessors: list[GLTFAccessor],
-                gltf_model_meshes: list[GLTFMesh],
-                gltf_node: GLTFNode,
+                gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                gltf_model_accessors: list[tiny_gltf.Accessor],
+                gltf_model_meshes: list[tiny_gltf.Mesh],
+                gltf_node: tiny_gltf.Node,
                 object: Object,
 	            materials_map: dict[int, int],
                 # TODO: implement export skin and use envelope_meshes
 	            envelope_meshes: list[Object],
                 optimize_mesh_nodes: bool):
-    gltf_mesh: GLTFMesh = GLTFMesh()
-    gltf_mesh_primitives: list[GLTFPrimitive] = []
+    gltf_mesh = tiny_gltf.Mesh()
+    gltf_mesh_primitives: list[tiny_gltf.Primitive] = []
     for mesh in object.get_mesh_components():
-        gltf_primitive: GLTFPrimitive = GLTFPrimitive()
+        gltf_primitive = tiny_gltf.Primitive()
 
         material: PBRMaterial = mesh.get_material()
         material_id: int = material.get_id()
@@ -157,7 +146,7 @@ def export_mesh(gltf_model_buffers_data: list[int],
                     triangle_array.append(v_index)
             triangles.append((triangle_array[0], triangle_array[1], triangle_array[2]))
         # next we should write mesh data into gltf mesh primitive
-        gltf_primitive.mode = TINYGLTF_MODE_TRIANGLES
+        gltf_primitive.mode = tiny_gltf.TINYGLTF_MODE_TRIANGLES
         if material_id in materials_map:
             gltf_primitive.material = materials_map[material_id]
         gltf_mesh_primitives.append(gltf_primitive)
@@ -167,8 +156,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                       gltf_model_buffer_views,
                                                       gltf_model_accessors,
                                                       triangles,
-                                                      TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT,
-                                                      TINYGLTF_TYPE_SCALAR)
+                                                      tiny_gltf.TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT,
+                                                      tiny_gltf.TINYGLTF_TYPE_SCALAR)
         gltf_primitive.indices = indices
         # before write positions and other attributes
         # we should convert it to plain arrays and calculate min and max values
@@ -259,8 +248,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                    len(vertices),
                                                                    False,
                                                                    False,
-                                                                   TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                   TINYGLTF_TYPE_VEC3,
+                                                                   tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                   tiny_gltf.TINYGLTF_TYPE_VEC3,
                                                                    min_positions,
                                                                    max_positions)
         # glTF supports only one normals attribute
@@ -272,8 +261,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                      len(vertices),
                                                                      False,
                                                                      False,
-                                                                     TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                     TINYGLTF_TYPE_VEC3,
+                                                                     tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                     tiny_gltf.TINYGLTF_TYPE_VEC3,
                                                                      [min_normals[0], min_normals[1], min_normals[2]],
                                                                      [max_normals[0], max_normals[1], max_normals[2]])
         for uv_index in range(mesh.get_uvs_count()):
@@ -284,8 +273,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                      len(vertices),
                                                                      False,
                                                                      False,
-                                                                     TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                     TINYGLTF_TYPE_VEC2,
+                                                                     tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                     tiny_gltf.TINYGLTF_TYPE_VEC2,
                                                                      [min_uvs[2 * uv_index], min_uvs[2 * uv_index + 1]],
                                                                      [max_uvs[2 * uv_index], max_uvs[2 * uv_index + 1]])
         for color_index in range(mesh.get_colors_count()):
@@ -296,8 +285,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                      len(vertices),
                                                                      False,
                                                                      False,
-                                                                     TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                     TINYGLTF_TYPE_VEC4,
+                                                                     tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                     tiny_gltf.TINYGLTF_TYPE_VEC4,
                                                                      [min_colors[4 * color_index], min_colors[4 * color_index + 1], min_colors[4 * color_index + 2], min_colors[4 * color_index + 3]],
                                                                      [max_colors[4 * color_index], max_colors[4 * color_index + 1], max_colors[4 * color_index + 2], max_colors[4 * color_index + 3]])
         # only one tangent attribute
@@ -309,8 +298,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                      len(vertices),
                                                                      False,
                                                                      False,
-                                                                     TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                     TINYGLTF_TYPE_VEC4,
+                                                                     tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                     tiny_gltf.TINYGLTF_TYPE_VEC4,
                                                                      [min_tangents[0], min_tangents[1], min_tangents[2], min_tangents[3]],
                                                                      [max_tangents[0], max_tangents[1], max_tangents[2], max_tangents[3]])
         # finally, shapes
@@ -324,8 +313,8 @@ def export_mesh(gltf_model_buffers_data: list[int],
                                                                      len(vertices),
                                                                      False,
                                                                      False,
-                                                                     TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                                                     TINYGLTF_TYPE_VEC3,
+                                                                     tiny_gltf.TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                                                     tiny_gltf.TINYGLTF_TYPE_VEC3,
                                                                      [min_shapes[shape_index * 3], min_shapes[shape_index * 3 + 1], min_shapes[shape_index * 3 + 2]],
                                                                      [max_shapes[shape_index * 3], max_shapes[shape_index * 3 + 1], max_shapes[shape_index * 3 + 2]])
         

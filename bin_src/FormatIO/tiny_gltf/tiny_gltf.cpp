@@ -71,7 +71,33 @@ std::vector<unsigned char> load_image(const std::string file_path) {
     return to_return;
 }
 
-PYBIND11_MODULE(tiny_gltf, py_module) {
+#ifdef PYTHON310
+PYBIND11_MODULE(tiny_gltf_py310, py_module) {
+#else
+#ifdef PYTHON311
+PYBIND11_MODULE(tiny_gltf_py311, py_module) {
+#else
+#ifdef PYTHON312
+PYBIND11_MODULE(tiny_gltf_py312, py_module) {
+#else
+#ifdef PYTHON36
+PYBIND11_MODULE(tiny_gltf_py36, py_module) {
+#else
+#ifdef PYTHON37
+PYBIND11_MODULE(tiny_gltf_py37, py_module) {
+#else
+#ifdef PYTHON38
+PYBIND11_MODULE(tiny_gltf_py38, py_module) {
+#else
+#ifdef PYTHON39
+PYBIND11_MODULE(tiny_gltf_py39, py_module) {
+#endif // PYTHON39
+#endif // PYTHON38
+#endif // PYTHON37
+#endif // PYTHON36
+#endif // PYTHON312
+#endif // PYTHON311
+#endif // PYTHON310
     py_module.doc() = "Bindings for tinygltf library";
 
     pybind11::class_<tinygltf::AnimationChannel>(py_module, "AnimationChannel")

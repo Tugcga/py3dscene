@@ -1,22 +1,17 @@
 from typing import Optional
-from py3dscene.bin.tiny_gltf import Node as GLTFNode  # type: ignore
-from py3dscene.bin.tiny_gltf import Camera as GLTFCamera  # type: ignore
-from py3dscene.bin.tiny_gltf import Light as GLTFLight  # type: ignore
-from py3dscene.bin.tiny_gltf import Mesh as GLTFMesh  # type: ignore
-from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_export.export_camera import export_camera
 from py3dscene.io.gltf_export.export_light import export_light
 from py3dscene.io.gltf_export.export_node import export_node
 from py3dscene.object import Object
 
 def export_iterate(gltf_model_buffers_data: list[int],
-                   gltf_model_buffer_views: list[GLTFBufferView],
-                   gltf_model_accessors: list[GLTFAccessor],
-                   gltf_model_nodes: list[GLTFNode],
-                   gltf_model_cameras: list[GLTFCamera],
-                   gltf_model_lights: list[GLTFLight],
-                   gltf_model_meshes: list[GLTFMesh],
+                   gltf_model_buffer_views: list[tiny_gltf.BufferView],
+                   gltf_model_accessors: list[tiny_gltf.Accessor],
+                   gltf_model_nodes: list[tiny_gltf.Node],
+                   gltf_model_cameras: list[tiny_gltf.Camera],
+                   gltf_model_lights: list[tiny_gltf.Light],
+                   gltf_model_meshes: list[tiny_gltf.Mesh],
                    object: Object,
                    exported_objects: set[int],
 	               materials_map: dict[int, int],
@@ -24,7 +19,7 @@ def export_iterate(gltf_model_buffers_data: list[int],
 	               object_to_node: dict[int, int],
                    optimize_mesh_nodes: bool) -> int:
     node_index: int = -1
-    gltf_node: Optional[GLTFNode] = None
+    gltf_node: Optional[tiny_gltf.Node] = None
     object_id: int = object.get_id()
     if object_id in exported_objects:
         return -1

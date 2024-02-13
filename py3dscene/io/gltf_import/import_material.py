@@ -1,9 +1,9 @@
-from py3dscene.bin.tiny_gltf import Material as GLTFMaterial  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.scene import Scene
 from py3dscene.material import PBRMaterial
 from py3dscene.material import AlphaMode
 
-def import_material(gltf_material: GLTFMaterial,
+def import_material(gltf_material: tiny_gltf.Material,
                     scene: Scene,
                     material_index: int,
                     images_map: dict[int, str]) -> PBRMaterial:

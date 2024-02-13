@@ -1,17 +1,13 @@
 import os
-from py3dscene.bin.tiny_gltf import Scene as GLTFScene  # type: ignore
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import Image as GLTFImage  # type: ignore
-from py3dscene.bin.tiny_gltf import write_png  # type: ignore
+from py3dscene.bin import tiny_gltf
 
-def import_images(gltf_model: GLTFModel,
-                  gltf_scene: GLTFScene,
+def import_images(gltf_model: tiny_gltf.Model,
                   file_path: str) -> dict[int, str]:
     file_path_norm: str = file_path.replace("/", "\\")
     images_map: dict[int, str] = {}
     images_count: int = len(gltf_model.images)
     for i in range(images_count):
-        gltf_image: GLTFImage = gltf_model.images[i]
+        gltf_image: tiny_gltf.Image = gltf_model.images[i]
         image_uri: str = gltf_image.uri
         # calculate image path
         # if uri is empty, then image is embedded
@@ -39,7 +35,7 @@ def import_images(gltf_model: GLTFModel,
             image_path = image_folder + image_name + ".png"
             # skip if the file already exists
             if not os.path.isfile(image_path):
-                is_write: bool = write_png(image_path, image_width, image_height, image_components, gltf_image.image)
+                is_write: bool = tiny_gltf.write_png(image_path, image_width, image_height, image_components, gltf_image.image)
                 if not is_write:
                     # fail to write the texture
                     image_path = ""

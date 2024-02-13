@@ -1,28 +1,24 @@
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
-from py3dscene.bin.tiny_gltf import Animation as GLTFAnimation  # type: ignore
-from py3dscene.bin.tiny_gltf import AnimationChannel as GLTFAnimationChannel  # type: ignore
-from py3dscene.bin.tiny_gltf import AnimationSampler as GLTFAnimationSampler  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.io.gltf_import.import_buffer import get_float_buffer
 from py3dscene.object import Object
 from py3dscene.animation import Animation
 from py3dscene.animation import AnimationCurveType
 
-def import_animations(gltf_model: GLTFModel,
+def import_animations(gltf_model: tiny_gltf.Model,
                       model_buffers_data: list[list[int]],
                       nodes_map: dict[int, Object],
                       fps: float):
     for anim_index in range(len(gltf_model.animations)):
-        animation: GLTFAnimation = gltf_model.animations[anim_index]
+        animation: tiny_gltf.Animation = gltf_model.animations[anim_index]
         for channel_index in range(len(animation.channels)):
-            channel: GLTFAnimationChannel = animation.channels[channel_index]
-            sampler: GLTFAnimationSampler = animation.samplers[channel.sampler]
+            channel: tiny_gltf.AnimationChannel = animation.channels[channel_index]
+            sampler: tiny_gltf.AnimationSampler = animation.samplers[channel.sampler]
             node_index: int = channel.target_node
             if node_index in nodes_map:
                 object = nodes_map[node_index]
                 target_path: str = channel.target_path
-                time_accessor: GLTFAccessor = gltf_model.accessors[sampler.input]
-                values_accessor: GLTFAccessor = gltf_model.accessors[sampler.output]
+                time_accessor: tiny_gltf.Accessor = gltf_model.accessors[sampler.input]
+                values_accessor: tiny_gltf.Accessor = gltf_model.accessors[sampler.output]
                 curve_type: AnimationCurveType = AnimationCurveType.CUBICSPLINE if sampler.interpolation == "CUBICSPLINE" else (AnimationCurveType.STEP if sampler.interpolation == "STEP" else AnimationCurveType.LINEAR)
                 times: list[float] = get_float_buffer(gltf_model, time_accessor, model_buffers_data)
                 values: list[float] = get_float_buffer(gltf_model, values_accessor, model_buffers_data, True)

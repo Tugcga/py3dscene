@@ -1,10 +1,9 @@
-from py3dscene.bin.tiny_gltf import Model as GLTFModel  # type: ignore
-from py3dscene.bin.tiny_gltf import Light as GLTFLight  # type: ignore
+from py3dscene.bin import tiny_gltf
 from py3dscene.object import Object
 from py3dscene.light import LightComponent
 from py3dscene.light import LightType
 
-def import_object_light(gltf_light: GLTFLight,
+def import_object_light(gltf_light: tiny_gltf.Light,
                         object: Object):
     gltf_type = gltf_light.type
     light: LightComponent = LightComponent()
