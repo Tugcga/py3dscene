@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from py3dscene.scene import Scene
 from py3dscene.material import PBRMaterial
 from py3dscene.object import Object
@@ -19,7 +20,6 @@ from py3dscene.bin.tiny_gltf import BufferView as GLTFBufferView  # type: ignore
 from py3dscene.bin.tiny_gltf import Accessor as GLTFAccessor  # type: ignore
 from py3dscene.bin.tiny_gltf import Animation as GLTFAnimation  # type: ignore
 from py3dscene.bin.tiny_gltf import Skin as GLTFSkin  # type: ignore
-from py3dscene.bin.tiny_gltf import Sampler as GLTFSampler  # type: ignore
 from py3dscene.io.gltf_import.import_image import import_images
 from py3dscene.io.gltf_import.import_material import import_material
 from py3dscene.io.gltf_import.import_object import process_node
@@ -145,12 +145,10 @@ def to_gltf(scene: Scene,
     gltf_model_buffers_data: list[int] = []
     gltf_model_buffer_views: list[GLTFBufferView] = []
     gltf_model_accessors: list[GLTFAccessor] = []
-    gltf_model_animations: list[GLTFAnimation] = []
     gltf_model_materials: list[GLTFMaterial] = []
     gltf_model_textures: list[GLTFTexture] = []
     gltf_model_images: list[GLTFImage] = []
     gltf_model_skins: list[GLTFSkin] = []
-    gltf_model_samplers: list[GLTFSampler] = []
 
     # at the beginning we should export materials and used textures
     export_materials(folder_path,
@@ -185,22 +183,26 @@ def to_gltf(scene: Scene,
     gltf_model.cameras = gltf_model_cameras
     gltf_model.lights = gltf_model_lights
     gltf_model.meshes = gltf_model_meshes
+
+    for i in range(len(envelope_meshes)):
+        export_skin(gltf_model_skins, i, envelope_meshes[i], object_to_node)
+    gltf_model.skins = gltf_model_skins
+    
+    gltf_model_animations: list[GLTFAnimation] = export_animation(gltf_model_buffers_data,
+                                                                  gltf_model_buffer_views,
+                                                                  gltf_model_accessors,
+                                                                  scene,
+                                                                  fps,
+                                                                  object_to_node)
+    if len(gltf_model_animations) > 0:
+        gltf_model.animations = gltf_model_animations
+
     gltf_model.accessors = gltf_model_accessors
     gltf_model.buffer_views = gltf_model_buffer_views
 
     data_buffer: GLTFBuffer = GLTFBuffer()
     data_buffer.data = gltf_model_buffers_data
     gltf_model.buffers = [data_buffer]
-
-    for i in range(len(envelope_meshes)):
-        export_skin(gltf_model_skins, i, envelope_meshes[i], object_to_node)
-    gltf_model.skins = gltf_model_skins
-    
-    export_animation(gltf_model_animations,
-                     gltf_model_samplers,
-                     object_to_node)
-    gltf_model.animations = gltf_model_animations
-    gltf_model.samplers = gltf_model_samplers
 
     gltf_scene.name = file_name
     gltf_model.scenes = [gltf_scene]

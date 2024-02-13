@@ -51,6 +51,7 @@ def export_iterate(gltf_model_buffers_data: list[int],
         exported_objects.add(object_id)
         node_index = len(gltf_model_nodes)
         gltf_model_nodes.append(gltf_node)
+        object_to_node[object_id] = node_index
 
         gltf_node_children: list[int] = []
         for child in object.get_children():

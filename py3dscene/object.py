@@ -6,6 +6,8 @@ from py3dscene.transform import tfm_to_translation
 from py3dscene.transform import tfm_to_rotation
 from py3dscene.transform import tfm_to_scale
 from py3dscene.transform import get_srt_matrix
+from py3dscene.transform import get_scale_matrix
+from py3dscene.transform import multiply
 from py3dscene.camera import CameraComponent
 from py3dscene.light import LightComponent
 from py3dscene.mesh import MeshComponent
@@ -60,8 +62,12 @@ class Object:
         self._transform = tfm
         # also extract translation, rotation and scale from this matrix
         self._translation = tfm_to_translation(tfm)
-        self._rotation = tfm_to_rotation(tfm)
         self._scale = tfm_to_scale(tfm)
+        # for rotation we should previously rescale transform 
+        inv_scale_tfm = get_scale_matrix(1.0 / self._scale[0], 1.0 / self._scale[1], 1.0 / self._scale[2])
+        rescale_tfm = multiply(tfm, inv_scale_tfm)
+        # extract rotation from scaled matrix
+        self._rotation = tfm_to_rotation(rescale_tfm)
     
     def set_local_translation(self, x: float, y: float, z: float):
         '''Define position of the object

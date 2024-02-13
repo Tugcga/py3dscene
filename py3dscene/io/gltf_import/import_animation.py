@@ -26,21 +26,22 @@ def import_animations(gltf_model: GLTFModel,
                 curve_type: AnimationCurveType = AnimationCurveType.CUBICSPLINE if sampler.interpolation == "CUBICSPLINE" else (AnimationCurveType.STEP if sampler.interpolation == "STEP" else AnimationCurveType.LINEAR)
                 times: list[float] = get_float_buffer(gltf_model, time_accessor, model_buffers_data)
                 values: list[float] = get_float_buffer(gltf_model, values_accessor, model_buffers_data, True)
+
                 if len(times) > 0 and len(values) > 0:
                     # for cubic curve each key defined by 3 values
                     # for linear and step only by 1 value
                     # for example, for translation cubic curve the number of values is x9 to the number of times
-                    anim: Animation = Animation(curve_type)
+                    anim: Animation = Animation(curve_type, 4 if target_path == "rotation" else 3)
                     for step, time in enumerate(times):
                         if curve_type == AnimationCurveType.CUBICSPLINE:
                             if target_path == "rotation":
-                                anim.add_keyframe(time * fps, ((values[4 * step], values[4 * step + 1], values[4 * step + 2], values[4 * step + 3]),
-                                                               (values[4 * step + 4], values[4 * step + 5], values[4 * step + 6], values[4 * step + 7]),
-                                                               (values[4 * step + 8], values[4 * step + 9], values[4 * step + 10], values[4 * step + 11])))
+                                anim.add_keyframe(time * fps, ((values[4 * step], values[12 * step + 1], values[12 * step + 2], values[12 * step + 3]),
+                                                               (values[12 * step + 4], values[12 * step + 5], values[12 * step + 6], values[12 * step + 7]),
+                                                               (values[12 * step + 8], values[12 * step + 9], values[12 * step + 10], values[12 * step + 11])))
                             else:
                                 anim.add_keyframe(time * fps, ((values[9 * step], values[9 * step + 1], values[9 * step + 2]),
-                                                               (values[9 * step + 4], values[9 * step + 5], values[9 * step + 6]),
-                                                               (values[9 * step + 7], values[9 * step + 8], values[9 * step + 9])))
+                                                               (values[9 * step + 3], values[9 * step + 4], values[9 * step + 5]),
+                                                               (values[9 * step + 6], values[9 * step + 7], values[9 * step + 8])))
                         else:
                             if target_path == "rotation":
                                 anim.add_keyframe(time * fps, (values[4 * step], values[4 * step + 1], values[4 * step + 2], values[4 * step + 3]))

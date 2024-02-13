@@ -180,7 +180,7 @@ def export_mesh(gltf_model_buffers_data: list[int],
         buffer_tangents: list[list[int]] = [[] for _ in range(mesh.get_tangents_count())]
         buffer_shapes: list[list[int]] = [[] for _ in range(mesh.get_shapes_count())]
         flt_max: float = sys.float_info.max
-        flt_min: float = sys.float_info.min
+        flt_min: float = -sys.float_info.max
         min_positions: list[float] = [flt_max] * 3
         max_positions: list[float] = [flt_min] * 3
         # in these arrays we store min/max values for all attributes of the same type

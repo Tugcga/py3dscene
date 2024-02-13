@@ -8,20 +8,34 @@ class AnimationCurveType(Enum):
 
 Vector3d = tuple[float, float, float]
 Quaternion4d = tuple[float, float, float, float]
-ValuesVariants = Vector3d | Quaternion4d | tuple[Vector3d, Vector3d, Vector3d] | tuple[Quaternion4d, Quaternion4d, Quaternion4d]
+Vector3dTriple = tuple[Vector3d, Vector3d, Vector3d]
+Quaternion4dTriple = tuple[Quaternion4d, Quaternion4d, Quaternion4d]
+ValuesVariants = Vector3d | Quaternion4d | Vector3dTriple | Quaternion4dTriple
 
 class Animation:
     '''Store animation clip
     '''
-    def __init__(self, type: AnimationCurveType) -> None:
+    def __init__(self, type: AnimationCurveType, value_components: int) -> None:
         self._type: AnimationCurveType = type
         self._points_count: int = 0
         self._frames: list[float] = []
         self._values: list[ValuesVariants] = []
+        self._value_components = value_components
     
     def add_keyframe(self, frame: float, value: ValuesVariants):
         '''Add keyframe to the clip at specific frame and with specific value
         '''
+        # check is the value have the proper format
+        if self._type == AnimationCurveType.CUBICSPLINE:
+            # in this case value should be the triple of tuples
+            for v in value:
+                if not (type(v) == tuple and len(v) == self._value_components):
+                    return None
+        else:
+            # in this case case should be a tuple
+            if len(value) != self._value_components:
+                return None
+
         i: int = 0
         while i < len(self._frames) and self._frames[i] < frame:
             i += 1
@@ -37,6 +51,13 @@ class Animation:
         '''Return type of the animation clip (linear, step or cubic)
         '''
         return self._type
+    
+    def get_value_components(self) -> int:
+        '''Return the number of components in one value stored in the animation
+        For example, rotation stored as 4d-tuple, translation and scale as 3d-tuple
+        This value does not depend on the animation curve type
+        '''
+        return self._value_components
     
     def get_frames(self) -> list[float]:
         '''Return the list of all key frames
