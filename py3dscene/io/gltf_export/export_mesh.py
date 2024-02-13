@@ -95,7 +95,7 @@ def export_mesh(gltf_model_buffers_data: list[int],
 	            materials_map: dict[int, int],
                 # TODO: implement export skin and use envelope_meshes
 	            envelope_meshes: list[Object],
-                optimize_mesh_nodes: bool):
+                optimize_mesh_nodes: bool) -> None:
     gltf_mesh = tiny_gltf.Mesh()
     gltf_mesh_primitives: list[tiny_gltf.Primitive] = []
     for mesh in object.get_mesh_components():

@@ -55,12 +55,12 @@ class MeshComponent:
                 self._triangles_to_node.append((size_accum, size_accum + i - 1, size_accum + i))
             size_accum += size
     
-    def set_material(self, material: PBRMaterial):
+    def set_material(self, material: PBRMaterial) -> None:
         '''Define material fo the mesh component
         '''
         self._material = material
     
-    def add_normals(self, normals: list[tuple[float, float, float]]):
+    def add_normals(self, normals: list[tuple[float, float, float]]) -> None:
         '''Add normals attribute to the mesh component
         '''
         for n in range(min(len(normals), self._nodes_count)):
@@ -69,7 +69,7 @@ class MeshComponent:
             self._normals[non_n].append((0.0, 0.0, 0.0))
         self._normals_count += 1
 
-    def add_uvs(self, uvs: list[tuple[float, float]]):
+    def add_uvs(self, uvs: list[tuple[float, float]]) -> None:
         '''Add uvs attributes to the mesh components
         '''
         for n in range(min(len(uvs), self._nodes_count)):
@@ -78,7 +78,7 @@ class MeshComponent:
             self._uvs[non_n].append((0.0, 0.0))
         self._uvs_count += 1
 
-    def add_colors(self, colors: list[tuple[float, float, float, float]]):
+    def add_colors(self, colors: list[tuple[float, float, float, float]]) -> None:
         '''Add vertex colors attribute to the mesh component
         '''
         for n in range(min(len(colors), self._nodes_count)):
@@ -87,7 +87,7 @@ class MeshComponent:
             self._colors[non_n].append((0.0, 0.0, 0.0, 0.0))
         self._colors_count += 1
 
-    def add_tangents(self, tangents: list[tuple[float, float, float, float]]):
+    def add_tangents(self, tangents: list[tuple[float, float, float, float]]) -> None:
         '''Add tangents attribute to the mesh component
         '''
         for n in range(min(len(tangents), self._nodes_count)):
@@ -96,7 +96,7 @@ class MeshComponent:
             self._tangents[non_n].append((0.0, 0.0, 0.0, 0.0))
         self._tangent_count += 1
 
-    def add_shape(self, values: list[tuple[float, float, float]]):
+    def add_shape(self, values: list[tuple[float, float, float]]) -> None:
         '''Add shape deform attribute to the mesh component
         This deformation define displacement of the mesh vertices
         Input array store delta vectors of the displacement

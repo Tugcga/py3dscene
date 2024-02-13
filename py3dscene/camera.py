@@ -20,28 +20,28 @@ class CameraComponent:
         self._ortho_width = 1.0
         self._ortho_height = 1.0
     
-    def set_type(self, value: CameraType):
+    def set_type(self, value: CameraType) -> None:
         '''Define the camera type (perspective or orthographic)
         '''
         self._type = value
     
-    def set_clipping_planes(self, near: float, far: float):
+    def set_clipping_planes(self, near: float, far: float) -> None:
         '''Define clipping planes of the camera
         '''
         self._near = near
         self._far = far
     
-    def set_perspective_aspect(self, value: float):
+    def set_perspective_aspect(self, value: float) -> None:
         '''Define aspect ratio of the perspective camera
         '''
         self._aspect = value
     
-    def set_perspective_fov(self, value: float):
+    def set_perspective_fov(self, value: float) -> None:
         '''Define vertical field of view of the perspective camera
         '''
         self._fov = value
     
-    def set_orthographic_size(self, width: float, height: float):
+    def set_orthographic_size(self, width: float, height: float) -> None:
         '''Define size of the orthographic camera
         '''
         self._ortho_width = width

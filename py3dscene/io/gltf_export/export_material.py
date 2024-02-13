@@ -71,7 +71,7 @@ def export_materials(output_folder: str,
                      gltf_model_materials: list[tiny_gltf.Material],
                      gltf_model_textures: list[tiny_gltf.Texture],
                      gltf_model_images: list[tiny_gltf.Image],
-                     materials_map: dict[int, int]):
+                     materials_map: dict[int, int]) -> None:
     # some materials can use the same textures
     # export each used texture once and then use the link
     textures_map: dict[str, int] = {}  # key - path to the texture, value - index in glTF model

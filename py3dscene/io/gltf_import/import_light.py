@@ -4,7 +4,7 @@ from py3dscene.light import LightComponent
 from py3dscene.light import LightType
 
 def import_object_light(gltf_light: tiny_gltf.Light,
-                        object: Object):
+                        object: Object) -> None:
     gltf_type = gltf_light.type
     light: LightComponent = LightComponent()
     gltf_name = gltf_light.name

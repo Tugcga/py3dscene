@@ -4,5 +4,5 @@ from py3dscene.object import Object
 def export_skin(gltf_model_skins: list[tiny_gltf.Skin],
                 skin_index: int,
                 object: Object,
-                object_to_node: dict[int, int]):
+                object_to_node: dict[int, int]) -> None:
     pass

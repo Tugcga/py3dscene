@@ -5,7 +5,7 @@ def export_transform(gltf_node: tiny_gltf.Node,
                      tfm: Transform,
                      translation: tuple[float, float, float],
                      rotation: tuple[float, float, float, float],
-                     scale: tuple[float, float, float]):
+                     scale: tuple[float, float, float]) -> None:
     # we use separate SRT from transform matrix
     # Warning: if we would like to use matrix, then we should transpose it
     # because glTF format use row-oriented matrix (instead of column-oriented in our case)

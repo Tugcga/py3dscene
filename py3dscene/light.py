@@ -19,32 +19,32 @@ class LightComponent:
         self._spot_inner_cone: float = 0.0
         self._spot_outer_cone = math.pi / 4.0
     
-    def set_name(self, value: str):
+    def set_name(self, value: str) -> None:
         '''Define the light name
         '''
         self._name = value
     
-    def set_color(self, r: float, g: float, b: float):
+    def set_color(self, r: float, g: float, b: float) -> None:
         '''Define the light color
         '''
         self._color = (r, g, b)
     
-    def set_strength(self, value: float):
+    def set_strength(self, value: float) -> None:
         '''Define the light intensity
         '''
         self._strength = value
     
-    def set_type(self, value: LightType):
+    def set_type(self, value: LightType) -> None:
         '''Define the light type (point, spot or directional)
         '''
         self._type = value
     
-    def set_range(self, value: float):
+    def set_range(self, value: float) -> None:
         '''Define the light range
         '''
         self._range = value
     
-    def set_spot_angles(self, inner: float, outer: float):
+    def set_spot_angles(self, inner: float, outer: float) -> None:
         '''Define inner and outer angles for the spot light
         '''
         self._spot_inner_cone = inner

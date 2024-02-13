@@ -7,7 +7,7 @@ from py3dscene.animation import AnimationCurveType
 def import_animations(gltf_model: tiny_gltf.Model,
                       model_buffers_data: list[list[int]],
                       nodes_map: dict[int, Object],
-                      fps: float):
+                      fps: float) -> None:
     for anim_index in range(len(gltf_model.animations)):
         animation: tiny_gltf.Animation = gltf_model.animations[anim_index]
         for channel_index in range(len(animation.channels)):

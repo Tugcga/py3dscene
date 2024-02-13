@@ -17,7 +17,7 @@ def write_animation_clip(gltf_model_buffers_data: list[int],
                          animation: Animation,
                          target_str: str,
                          node_index: int,
-                         fps: float):
+                         fps: float) -> None:
     # for the animation we should transform key frames into plane array of seconds
     # values into plane array of floats
     # and then write it to the buffer
@@ -101,7 +101,7 @@ def export_object_animation(gltf_model_buffers_data: list[int],
                             gltf_model_animations: list[tiny_gltf.Animation],
                             object_to_node: dict[int, int],
                             object: Object,
-                            fps: float):
+                            fps: float) -> None:
     gltf_animation_samplers: list[tiny_gltf.AnimationSampler] = []
     gltf_animation_channels: list[tiny_gltf.AnimationChannel] = []
 

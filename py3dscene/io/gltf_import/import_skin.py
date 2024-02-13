@@ -5,6 +5,6 @@ def import_object_skin(gltf_model: tiny_gltf.Model,
                        object: Object,
                        skin_index: int,
                        envelope_data: dict[int, list[float]],
-                       nodes_map: dict[int, Object]):
+                       nodes_map: dict[int, Object]) -> None:
     # TODO: implement skin import
     pass

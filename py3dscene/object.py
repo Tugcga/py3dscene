@@ -56,7 +56,7 @@ class Object:
         self._children.append(new_object)
         return new_object
     
-    def set_local_tfm(self, tfm: Transform):
+    def set_local_tfm(self, tfm: Transform) -> None:
         '''Define matrix of the local transformation of the object
         '''
         self._transform = tfm
@@ -69,50 +69,50 @@ class Object:
         # extract rotation from scaled matrix
         self._rotation = tfm_to_rotation(rescale_tfm)
     
-    def set_local_translation(self, x: float, y: float, z: float):
+    def set_local_translation(self, x: float, y: float, z: float) -> None:
         '''Define position of the object
         '''
         self._translation = (x, y, z)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
 
-    def set_local_rotation(self, x: float, y: float, z: float, w: float):
+    def set_local_rotation(self, x: float, y: float, z: float, w: float) -> None:
         '''Define rotation of the object
         '''
         self._rotation = (x, y, z, w)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
 
-    def set_local_scale(self, x: float, y: float, z: float):
+    def set_local_scale(self, x: float, y: float, z: float) -> None:
         '''Define scale of the object
         '''
         self._scale = (x, y, z)
         self._transform = get_srt_matrix(self._translation, self._rotation, self._scale)
     
-    def set_camera_component(self, camera: CameraComponent):
+    def set_camera_component(self, camera: CameraComponent) -> None:
         '''Add camera component to the object
         '''
         self._camera = camera
     
-    def set_light_component(self, light: LightComponent):
+    def set_light_component(self, light: LightComponent) -> None:
         '''Add light component to the object
         '''
         self._light = light
     
-    def set_translation_animation(self, animation: Animation):
+    def set_translation_animation(self, animation: Animation) -> None:
         '''Define translation animation of the object
         '''
         self._translation_animation = animation
     
-    def set_rotation_animation(self, animation: Animation):
+    def set_rotation_animation(self, animation: Animation) -> None:
         '''Define rotation animation of the object
         '''
         self._rotation_animation = animation
     
-    def set_scale_animation(self, animation: Animation):
+    def set_scale_animation(self, animation: Animation) -> None:
         '''Define scale animation of the object
         '''
         self._scale_animation = animation
     
-    def add_mesh_component(self, mesh: MeshComponent):
+    def add_mesh_component(self, mesh: MeshComponent) -> None:
         '''Add mesh component to the object
         Each object can contains several mesh components
         '''

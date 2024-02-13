@@ -78,7 +78,7 @@ def add_float_to_buffer(gltf_model_buffers_data: list[int],
                         data: list[float],
                         ignore_target: bool,
                         component_type: int,
-                        data_type: int):
+                        data_type: int) -> int:
     items_count: int = len(data) // tiny_gltf.get_num_components_in_type(data_type)
     byte_vector: list[int] = []
     for v in data:

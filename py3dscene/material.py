@@ -41,62 +41,62 @@ class PBRMaterial(Material):
         self._normal_texture: Optional[tuple[str, int, float]] = None
         self._occlusion_texture: Optional[tuple[str, int, float]] = None
     
-    def set_alpha_mode(self, value: AlphaMode):
+    def set_alpha_mode(self, value: AlphaMode) -> None:
         '''Define alpha mode of the material
         '''
         self._alpha_mode = value
     
-    def set_alpha_cutoff(self, value: float):
+    def set_alpha_cutoff(self, value: float) -> None:
         '''Define cut-off level for the alpha of the material
         '''
         self._alpha_cutoff = value
     
-    def set_double_sided(self, value: bool):
+    def set_double_sided(self, value: bool) -> None:
         '''Set material double-sided (or not)
         '''
         self._is_double_sided = value
     
-    def set_albedo(self, r: float, g: float, b: float, a: float):
+    def set_albedo(self, r: float, g: float, b: float, a: float) -> None:
         '''Define albedo color of the material
         '''
         self._albedo = (r, g, b, a)
     
-    def set_metalness(self, value: float):
+    def set_metalness(self, value: float) -> None:
         '''Define metalness value of the material
         '''
         self._metalness = value
     
-    def set_roughness(self, value: float):
+    def set_roughness(self, value: float) -> None:
         '''Define roughness value of the material
         '''
         self._roughness = value
     
-    def set_emissive(self, r: float, g: float, b: float):
+    def set_emissive(self, r: float, g: float, b: float) -> None:
         '''Define emissive value of the material
         '''
         self._emissive = (r, g, b)
     
-    def set_albedo_texture(self, texture_path: str, uv_index: int):
+    def set_albedo_texture(self, texture_path: str, uv_index: int) -> None:
         '''Define albedo texture of the material
         '''
         self._albedo_texture = (texture_path, uv_index)
     
-    def set_metallic_roughness_texture(self, texture_path: str, uv_index: int):
+    def set_metallic_roughness_texture(self, texture_path: str, uv_index: int) -> None:
         '''Define one texture for metallic and roughness of the material
         '''
         self._metallic_roughness_texture = (texture_path, uv_index)
     
-    def set_emissive_texture(self, texture_path: str, uv_index: int):
+    def set_emissive_texture(self, texture_path: str, uv_index: int) -> None:
         '''Define emissive texture of the material
         '''
         self._emissive_texture = (texture_path, uv_index)
     
-    def set_normal_texture(self, texture_path: str, uv_index: int, strength: float):
+    def set_normal_texture(self, texture_path: str, uv_index: int, strength: float) -> None:
         '''Define normal texture of the material
         '''
         self._normal_texture = (texture_path, uv_index, strength)
     
-    def set_occlusion_texture(self, texture_path: str, uv_index: int, strength: float):
+    def set_occlusion_texture(self, texture_path: str, uv_index: int, strength: float) -> None:
         '''Define ambient occlusion texture of the material
         '''
         self._occlusion_texture = (texture_path, uv_index, strength)

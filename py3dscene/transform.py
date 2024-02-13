@@ -12,7 +12,7 @@ In this form transformed coordinates of the point (x, y, z) can be found:
 Coordinates are columns
 '''
 
-def length(x: float, y: float, z: float):
+def length(x: float, y: float, z: float) -> float:
     '''Return the length of the vector (x, y, z)
     '''
     return math.sqrt(x**2 + y**2 + z**2)

@@ -17,7 +17,7 @@ def process_node(gltf_model: tiny_gltf.Model,
                  parent: Optional[Object],
                  materials_map: dict[int, PBRMaterial],
                  nodes_map: dict[int, Object],
-                 envelopes: list[tuple[int, Object, dict[int, list[float]]]]):
+                 envelopes: list[tuple[int, Object, dict[int, list[float]]]]) -> None:
     local_tfm = import_transform(gltf_node)
     object_name = gltf_node.name
     # create new object

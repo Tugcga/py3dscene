@@ -22,7 +22,7 @@ class Animation:
         self._values: list[ValuesVariants] = []
         self._value_components = value_components
     
-    def add_keyframe(self, frame: float, value: ValuesVariants):
+    def add_keyframe(self, frame: float, value: ValuesVariants) -> None:
         '''Add keyframe to the clip at specific frame and with specific value
         '''
         # check is the value have the proper format

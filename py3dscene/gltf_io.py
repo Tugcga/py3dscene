@@ -75,7 +75,7 @@ def to_gltf(scene: Scene,
             optimize_mesh_nodes: bool=False,
             embed_images: bool=False,
             embed_buffers: bool=False,
-            fps: float=30.0):
+            fps: float=30.0) -> None:
     '''Export scene object as gltf or glb file
     Parameters:
     file_path: full output path with extension

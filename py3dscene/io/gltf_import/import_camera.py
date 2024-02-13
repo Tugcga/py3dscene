@@ -4,7 +4,7 @@ from py3dscene.camera import CameraComponent
 from py3dscene.camera import CameraType
 
 def import_object_camera(gltf_camera: tiny_gltf.Camera,
-                         object: Object):
+                         object: Object) -> None:
     gltf_type = gltf_camera.type
     camera: CameraComponent = CameraComponent()
     if gltf_type == "perspective":

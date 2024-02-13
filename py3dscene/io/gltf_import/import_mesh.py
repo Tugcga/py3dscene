@@ -48,7 +48,7 @@ def add_shape_target(gltf_model: tiny_gltf.Model,
                      model_buffers_data: list[list[int]],
                      gltf_shape: dict[str, int],
                      shape_name: str,
-                     mesh: MeshComponent):
+                     mesh: MeshComponent) -> None:
     if shape_name in gltf_shape:
         acc_index: int = gltf_shape[shape_name]
         shape_accessor: tiny_gltf.Accessor = gltf_model.accessors[acc_index]
@@ -86,7 +86,7 @@ def import_object_mesh(gltf_model: tiny_gltf.Model,
                        model_buffers_data: list[list[int]],
                        object: Object,
                        materials_map: dict[int, PBRMaterial],
-                       envelop_map: dict[int, list[float]]):
+                       envelop_map: dict[int, list[float]]) -> None:
     for primitive_index in range(len(gltf_mesh.primitives)):
         gltf_primitive: tiny_gltf.Primitive = gltf_mesh.primitives[primitive_index]
         position_attr_index: int = gltf_primitive.attributes["POSITION"]
