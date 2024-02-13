@@ -6,6 +6,8 @@ The main goal of this module is to implement high level interface for geometric 
 
 The module require compiled bindings for [TinyGLTF](https://github.com/syoyo/tinygltf) module. Sources for these bindings contained in ```bin_src/FormatIO/``` It require ```pybind11```. Compile into the```py3dscene/bin/``` folder. So, this folder should contain the file ```tiny_gltf.pyd```
 
+The module contains loader for pre-build binaries for Windows x64 Python 3.6 - 3.12. All these binaries placed in [release](https://github.com/Tugcga/py3dscene/releases/tag/1.0) page. The module search required binaries and if there are no ones, then it try to download proper version from this page.
+
 ## Supported geometric data
 
 * Objects hierarchy
