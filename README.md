@@ -112,8 +112,8 @@ def __init__(type: AnimationCurveType, value_components: int) -> None
 
 Create animation clip object and store the curve for one parameter
 Parameters:
-    type - the type of the curve (Linear, Step or CubicSpline)
-    value_components - the number of vector component for one value (3 for position, 4 for quaternion)
+* type - the type of the curve (Linear, Step or CubicSpline)
+* value_components - the number of vector component for one value (3 for position, 4 for quaternion)
 
 
 #### add\_keyframe
@@ -318,23 +318,11 @@ def to_gltf(scene: Scene,
 
 Export scene object as gltf or glb file
 Parameters:
-file_path: full output path with extension
-optimize_mesh_nodes: if True, then in the export process the module try to reduce the number of vertices in the output meshes
-    in the mesh it's possible to have one vertex and different normals in polygons incident to this vertex
-    if optimization is ON, then the exporter check is polygon nodes have different attributes or not
-    if at least one attribute (position, normal, uv etc) is different, then it creates the new vertex
-    if all attributes the same, then use the same vertex
-    but this process is long for dense mesh
-    so, it's possible to deactivate this flag
-    it the flag is False then the output mesh have the same vertices as it is, node attributes are override by last node
-    if the mesh is imported from glTF, then it's ok, because all vertices already are splitted by difference in node attributes
-embed_images: if True then embed image data into output file and does not create separate texture files
-    if False then textures are stored in the same directory as the output file
-embed_buffers: if True then hte binary buffer is embedded into output file
-    if False then create the separate file *.bin
-fps: the number of frames per second for exporting animations
-    in 3d-scene animations are stored by using key-frames, but in glTF it use seconds
-    so, fps used for converting frames to seconds
+* file_path: full output path with extension
+* optimize_mesh_nodes: if True, then in the export process the module try to reduce the number of vertices in the output meshes.   In the mesh it's possible to have one vertex and different normals in polygons incident to this vertex. If optimization is ON, then the exporter check is polygon nodes have different attributes or not. If at least one attribute (position, normal, uv etc) is different, then it creates the new vertex. If all attributes the same, then use the same vertex. But this process is long for dense mesh. So, it's possible to deactivate this flag. If the flag is False then the output mesh have the same vertices as it is, node attributes are override by last node. If the mesh is imported from glTF, then it's ok, because all vertices already are splitted by difference in node attributes
+* embed_images: if True then embed image data into output file and does not create separate texture files. If False then textures are stored in the same directory as the output file
+* embed_buffers: if True then hte binary buffer is embedded into output file. If False then create the separate file *.bin
+* fps: the number of frames per second for exporting animations. In 3d-scene animations are stored by using key-frames, but in glTF it use seconds. So, fps used for converting frames to seconds
 
 
 ## LightComponent Objects
