@@ -6,7 +6,7 @@ __pycache__
 *.vcxproj
 *.filters
 bin_src/FormatIO/temp_build
-py3dscene/bin
+*.pyd
 samples
 .vscode
 .mypy_cache
