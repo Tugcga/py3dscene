@@ -11,3 +11,5 @@ samples
 .vscode
 .mypy_cache
 docs
+api.md
+api_correct.md

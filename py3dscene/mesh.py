@@ -8,6 +8,12 @@ class MeshComponent:
     def __init__(self,
                  vertices: list[tuple[float, float, float]],
                  polygons: list[tuple[int, ...]]) -> None:
+        '''Create mesh object
+
+        Parameters:
+            vertices - the list with coordinates of vertex positions
+            polygons - list with tuples which describe polygons
+        '''
         self._vertices: list[tuple[float, float, float]] = [v for v in vertices]
         self._vertex_count = len(self._vertices)
         self._polygons: list[tuple[int, ...]] = [tuple(p) for p in polygons]

@@ -8,7 +8,7 @@ def import_object_light(gltf_light: tiny_gltf.Light,
     gltf_type = gltf_light.type
     light: LightComponent = LightComponent()
     gltf_name = gltf_light.name
-    if len(gltf_name ) > 0:
+    if len(gltf_name) > 0:
         light.set_name(gltf_name)
 
     gltf_color = gltf_light.color

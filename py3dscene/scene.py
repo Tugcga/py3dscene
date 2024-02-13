@@ -6,6 +6,8 @@ class Scene:
     '''Main class for store 3d-scene data
     '''
     def __init__(self) -> None:
+        '''Create the scene object. No parameters required
+        '''
         self._materials: list[PBRMaterial] = []
         self._objects: list[Object] = []
 

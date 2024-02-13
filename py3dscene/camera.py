@@ -10,6 +10,8 @@ class CameraComponent:
     '''Store the camera in the 3d-scene
     '''
     def __init__(self) -> None:
+        '''Create camera object. No parameters required
+        '''
         self._type = CameraType.PERSPECTIVE
         self._near = 0.0
         self._far = sys.float_info.max

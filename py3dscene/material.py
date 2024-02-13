@@ -15,6 +15,12 @@ class PBRMaterial(Material):
     '''Class to store parameters of the simple pbr-material
     '''
     def __init__(self, name: str="", id: Optional[int]=None) -> None:
+        '''Create material object. It's recommended to create materials by using scene method
+
+        Parameters:
+            name - the name of the material
+            id - preferred id value
+        '''
         self._id: int = 0
         if id is None:
             self._id = Material.id_pointer

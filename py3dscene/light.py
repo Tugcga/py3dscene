@@ -10,6 +10,8 @@ class LightComponent:
     '''Store the light in the 3d-scene
     '''
     def __init__(self) -> None:
+        '''Create light object. No parameters required
+        '''
         self._name: str = "unnamed"
         self._color: tuple[float, float, float] = (1.0, 1.0, 1.0)
         self._strength: float = 1.0

@@ -16,6 +16,11 @@ class Animation:
     '''Store animation clip
     '''
     def __init__(self, type: AnimationCurveType, value_components: int) -> None:
+        '''Create animation clip object and store the curve for one parameter
+        Parameters:
+            type - the type of the curve (Linear, Step or CubicSpline)
+            value_components - the number of vector component for one value (3 for position, 4 for quaternion)
+        '''
         self._type: AnimationCurveType = type
         self._points_count: int = 0
         self._frames: list[float] = []

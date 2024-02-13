@@ -19,6 +19,12 @@ class Object:
     id_pointer: int = 0
 
     def __init__(self, name: str="", id: Optional[int]=None) -> None:
+        '''Create object. It does not recommended to create objects manually, instead it's better to use the scene object method
+
+        Parameters:
+            name - the name of the objects
+            id - preferred id of the object
+        '''
         self._name: str = name if len(name) > 0 else "unnamed"
         self._children: list[Object] = []
         self._id: int = 0
